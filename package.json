@@ -1,0 +1,17 @@
+{
+  "name": "Vincis-App",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "lerna run dev --parallel",
+    "build": "lerna run build",
+    "start": "lerna run start --parallel"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^9.0.7"
+  }
+}
