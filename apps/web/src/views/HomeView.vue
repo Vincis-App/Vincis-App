@@ -9,4 +9,5 @@ import { VButton, VBadge, VAlert } from '@/components/ui'
     Um app pra lacrar nos concursos
   </p>
   <Button label="Botão prime vue" />
+  <h1>aaaaaaaaa</h1>
 </template>

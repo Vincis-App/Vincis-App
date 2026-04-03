@@ -1,25 +1,86 @@
 <script setup lang="ts">
 defineProps<{
+  modelValue?: string;
   label?: string;
-  modelValue: string | number;
-  error?: string;
   placeholder?: string;
+  hint?: string;
+  error?: string;
+  icon?: string;
   type?: string;
+  disabled?: boolean;
+  readonly?: boolean;
+  rows?: number;
+  multiline?: boolean;
 }>();
-defineEmits(['update:modelValue']);
+
+defineEmits<{
+  (e: 'update:modelValue', value: string): void;
+}>();
 </script>
 
 <template>
   <div class="flex flex-col gap-1.5 w-full">
-    <label v-if="label" class="text-[11px] uppercase tracking-wider font-bold text-secondary ml-1">{{ label }}</label>
-    <input 
-      :type="type || 'text'"
-      :value="modelValue"
-      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
-      :placeholder="placeholder"
-      class="w-full px-4 py-3 rounded-xl bg-white border border-outline-variant/30 focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all font-body"
-      :class="{ 'border-error focus:border-error focus:ring-error/10': error }"
-    />
-    <span v-if="error" class="text-[10px] text-error font-medium ml-1">{{ error }}</span>
+    <!-- Label -->
+    <label
+      v-if="label"
+      class="block text-xs font-label font-semibold"
+      :class="error ? 'text-error' : 'text-on-surface-variant'"
+    >
+      {{ label }}
+    </label>
+
+    <!-- Textarea -->
+    <div v-if="multiline" class="relative">
+      <textarea
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :readonly="readonly"
+        :rows="rows ?? 3"
+        :value="modelValue"
+        @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
+        class="w-full bg-surface-container-low border rounded-lg py-2.5 px-4 text-sm font-body resize-none transition-all"
+        :class="[
+          error
+            ? 'border-2 border-error bg-error-container/30 text-error'
+            : 'border-outline-variant/40 focus:ring-2 focus:ring-primary/50 focus:border-primary',
+          disabled && 'bg-surface-container-high/60 border-outline-variant/20 text-secondary/60 cursor-not-allowed',
+        ]"
+      />
+    </div>
+
+    <!-- Regular Input -->
+    <div v-else class="relative">
+      <span
+        v-if="icon"
+        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg pointer-events-none"
+        :class="error ? 'text-error' : 'text-secondary'"
+      >{{ icon }}</span>
+
+      <input
+        :type="type ?? 'text'"
+        :placeholder="placeholder"
+        :disabled="disabled"
+        :readonly="readonly"
+        :value="modelValue"
+        @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+        class="w-full bg-surface-container-low border rounded-lg py-2.5 pr-4 text-sm font-body transition-all"
+        :class="[
+          icon ? 'pl-10' : 'pl-4',
+          error
+            ? 'border-2 border-error bg-error-container/30 text-error'
+            : 'border-outline-variant/40 focus:ring-2 focus:ring-primary/50 focus:border-primary',
+          disabled && 'bg-surface-container-high/60 border-outline-variant/20 text-secondary/60 cursor-not-allowed',
+        ]"
+      />
+    </div>
+
+    <!-- Error message -->
+    <p v-if="error" class="text-[10px] text-error font-semibold flex items-center gap-1">
+      <span class="material-symbols-outlined" style="font-size: 11px;">error</span>
+      {{ error }}
+    </p>
+
+    <!-- Hint -->
+    <p v-else-if="hint" class="text-[10px] text-secondary">{{ hint }}</p>
   </div>
 </template>

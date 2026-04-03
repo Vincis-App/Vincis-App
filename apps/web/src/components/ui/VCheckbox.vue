@@ -1,26 +1,53 @@
 <script setup lang="ts">
 defineProps<{
+  modelValue?: boolean;
   label?: string;
-  modelValue: boolean;
+  disabled?: boolean;
 }>();
-defineEmits(['update:modelValue']);
+
+defineEmits<{
+  (e: 'update:modelValue', value: boolean): void;
+}>();
 </script>
 
 <template>
-  <label class="flex items-center gap-3 cursor-pointer group">
-    <div class="relative flex items-center">
-      <input 
-        type="checkbox" 
-        :checked="modelValue"
-        @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
-        class="peer appearance-none w-5 h-5 border-2 border-outline-variant rounded-md checked:bg-primary checked:border-primary transition-all cursor-pointer"
-      />
-      <span class="material-symbols-outlined absolute text-white text-[16px] scale-0 peer-checked:scale-100 transition-transform left-0.5 pointer-events-none">
-        check
-      </span>
+  <label
+    class="flex items-center gap-3 cursor-pointer group"
+    :class="disabled && 'opacity-40 cursor-not-allowed'"
+  >
+    <!-- Custom checkbox box -->
+    <div
+      class="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 transition-colors"
+      :class="
+        modelValue
+          ? 'bg-primary'
+          : 'border-2 border-outline-variant group-hover:border-primary'
+      "
+      @click="!disabled && $emit('update:modelValue', !modelValue)"
+    >
+      <span
+        v-if="modelValue"
+        class="material-symbols-outlined text-on-primary"
+        style="font-size: 14px;"
+      >check</span>
     </div>
-    <span v-if="label" class="text-sm font-medium text-on-surface group-hover:text-primary transition-colors italic font-serif">
+
+    <!-- Hidden native input for a11y -->
+    <input
+      type="checkbox"
+      class="sr-only"
+      :checked="modelValue"
+      :disabled="disabled"
+      @change="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
+    />
+
+    <!-- Label text -->
+    <span
+      class="text-sm font-body"
+      :class="modelValue ? 'text-on-surface' : 'text-secondary'"
+    >
       {{ label }}
+      <slot />
     </span>
   </label>
 </template>

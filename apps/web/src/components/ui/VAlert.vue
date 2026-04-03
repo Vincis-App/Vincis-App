@@ -1,28 +1,69 @@
 <script setup lang="ts">
 defineProps<{
+  variant?: 'success' | 'error' | 'warning' | 'info';
   title?: string;
-  message: string;
-  variant?: 'success' | 'error';
+  message?: string;
+  dismissible?: boolean;
 }>();
+
+defineEmits<{
+  (e: 'dismiss'): void;
+}>();
+
+const iconMap = {
+  success: 'check_circle',
+  error:   'error',
+  warning: 'warning',
+  info:    'info',
+} as const;
 </script>
 
 <template>
-  <div 
-    class="p-4 rounded-xl border flex gap-4 items-start shadow-sm"
+  <div
+    class="flex items-start gap-3 px-4 py-3 bg-surface-container-lowest rounded-xl shadow-lg vincis-toast"
     :class="{
-      'bg-white border-success/30': variant === 'success',
-      'bg-white border-error/30': variant === 'error'
+      'border border-success/20': !variant || variant === 'success',
+      'border border-error/20':   variant === 'error',
+      'border border-warning/20': variant === 'warning',
+      'border border-primary/20': variant === 'info',
     }"
   >
-    <span 
-      class="material-symbols-outlined"
-      :class="variant === 'success' ? 'text-success' : 'text-error'"
+    <!-- Icon -->
+    <div
+      class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+      :class="{
+        'bg-success-container': !variant || variant === 'success',
+        'bg-error-container':   variant === 'error',
+        'bg-warning-container': variant === 'warning',
+        'bg-primary-fixed':     variant === 'info',
+      }"
     >
-      {{ variant === 'success' ? 'check_circle' : 'error' }}
-    </span>
-    <div>
-      <h4 v-if="title" class="font-bold text-sm leading-none mb-1">{{ title }}</h4>
-      <p class="text-sm text-secondary">{{ message }}</p>
+      <span
+        class="material-symbols-outlined"
+        style="font-size: 18px; font-variation-settings: 'FILL' 1;"
+        :class="{
+          'text-success': !variant || variant === 'success',
+          'text-error':   variant === 'error',
+          'text-warning': variant === 'warning',
+          'text-primary': variant === 'info',
+        }"
+      >{{ iconMap[variant ?? 'success'] }}</span>
     </div>
+
+    <!-- Content -->
+    <div class="flex-1 min-w-0">
+      <p v-if="title" class="text-sm font-bold text-on-surface">{{ title }}</p>
+      <p v-if="message" class="text-xs text-secondary mt-0.5">{{ message }}</p>
+      <slot />
+    </div>
+
+    <!-- Dismiss button -->
+    <button
+      v-if="dismissible"
+      class="text-secondary hover:text-on-surface ml-1 transition-colors"
+      @click="$emit('dismiss')"
+    >
+      <span class="material-symbols-outlined text-lg">close</span>
+    </button>
   </div>
 </template>
