@@ -1,8 +1,7 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { PrimeVue } from "@primevue/core";
-import Aura from "@primeuix/themes/aura";
-import VincisTheme from "./vincis-primevue-theme.js";
+import VincisTheme from "./vincis-primevue-theme";
 import ToastService from 'primevue/toastservice'
 import 'primeicons/primeicons.css'
 import './global.css'
