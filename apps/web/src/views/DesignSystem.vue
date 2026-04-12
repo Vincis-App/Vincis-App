@@ -705,7 +705,7 @@ const disciplineOptions = [
               <VSelect
                 label="Disciplina"
                 :options="disciplineOptions"
-                :model-value="disciplineOptions[0].value"
+                :model-value="disciplineOptions[0]?.value"
               />
             </div>
             <div class="flex gap-3 mt-6">
