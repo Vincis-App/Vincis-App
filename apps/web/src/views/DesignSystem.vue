@@ -352,9 +352,51 @@ toast.add({ severity: 'info', summary: 'Título', detail: 'Mensagem', life: 3000
         </div>
       </section>
 
-      <!-- FEEDBACK -->
-      <section id="feedback" class="ds-section">
-        <div class="ds-section-label">07 — Feedback Visual</div>
+      <!-- ═══════════════════════════════════════
+           7. FEEDBACK — TOASTS & MODAIS
+      ═══════════════════════════════════════ -->
+      <section id="feedback">
+        <div class="vincis-section-label">07 — Feedback Visual</div>
+
+        <!-- Toasts -->
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Toasts / Notificações</p>
+        <div class="space-y-3 mb-10">
+          <VAlert variant="success" title="Evento criado com sucesso!" message="Filosofia Analítica adicionado ao dia 11." dismissible />
+          <VAlert variant="error"   title="Falha ao sincronizar"        message="Verifique sua conexão e tente novamente." dismissible />
+          <VAlert variant="warning" title="Meta semanal em risco"       message="Você está 5.5h abaixo da sua meta de 20h." dismissible />
+          <VAlert variant="info"    title="IA analisando seu padrão"    message="A agenda inteligente será atualizada em instantes." dismissible />
+        </div>
+
+        <!-- Modal -->
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Modal</p>
+        <div class="relative rounded-2xl overflow-hidden border border-outline-variant/20">
+          <div class="absolute inset-0 vincis-modal-overlay rounded-2xl"></div>
+          <div class="relative z-10 m-6 sm:m-10 bg-surface-container-lowest rounded-2xl shadow-2xl p-6 max-w-sm mx-auto">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-serif font-bold text-xl text-on-surface">Novo Evento</h3>
+              <button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div class="space-y-4">
+              <VInput label="Título" placeholder="Ex: Revisão Ativa" />
+              <div class="grid grid-cols-2 gap-3">
+                <VInput label="Data"    placeholder="DD/MM/AAAA" />
+                <VInput label="Horário" placeholder="08:00" />
+              </div>
+              <VSelect
+                label="Disciplina"
+                :options="disciplineOptions"
+                :model-value="disciplineOptions[0]?.value"
+              />
+            </div>
+            <div class="flex gap-3 mt-6">
+              <VButton variant="secondary" class="flex-1">Cancelar</VButton>
+              <VButton variant="primary"   class="flex-1">Criar Evento</VButton>
+            </div>
+          </div>
+          <div class="h-8"></div>
+        </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <DsCard>

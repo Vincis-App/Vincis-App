@@ -13,8 +13,19 @@ const router = createRouter({
       path: '/design-system',
       name: 'design-system',
       component: () => import('../views/DesignSystem.vue')
+    },
+    {
+      path: '/auth',
+      name: 'auth',
+      component: () => import('../views/AuthView.vue')
+    },
+    {
+      path: '/private',
+      name: 'private',
+      component: () => import('../views/PrivateView.vue')
     }
   ],
 })
+
 
 export default router
