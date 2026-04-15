@@ -15,10 +15,13 @@
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
     "@primevue/themes": "^4.5.4",
+    "pg": "^8.20.0",
+    "postgres-array": "^3.0.4",
     "primeicons": "^7.0.0",
     "primevue": "^4.5.5"
   },
   "devDependencies": {
+    "@types/pg": "^8.20.0",
     "autoprefixer": "^10.4.27",
     "lerna": "^9.0.7",
     "postcss": "^8.5.9",

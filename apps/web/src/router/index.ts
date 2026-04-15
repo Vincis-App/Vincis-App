@@ -23,6 +23,11 @@ const router = createRouter({
       path: '/private',
       name: 'private',
       component: () => import('../views/PrivateView.vue')
+    },
+    {
+      path: '/pau',
+      name: 'pau',
+      component: () => import('../views/Pau.vue')
     }
   ],
 })
