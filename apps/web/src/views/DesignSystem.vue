@@ -353,19 +353,10 @@ toast.add({ severity: 'info', summary: 'Título', detail: 'Mensagem', life: 3000
       </section>
 
       <!-- ═══════════════════════════════════════
-           7. FEEDBACK — TOASTS & MODAIS
+           7. FEEDBACK — MODAIS & EMPTY STATES
       ═══════════════════════════════════════ -->
       <section id="feedback">
         <div class="vincis-section-label">07 — Feedback Visual</div>
-
-        <!-- Toasts -->
-        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Toasts / Notificações</p>
-        <div class="space-y-3 mb-10">
-          <VAlert variant="success" title="Evento criado com sucesso!" message="Filosofia Analítica adicionado ao dia 11." dismissible />
-          <VAlert variant="error"   title="Falha ao sincronizar"        message="Verifique sua conexão e tente novamente." dismissible />
-          <VAlert variant="warning" title="Meta semanal em risco"       message="Você está 5.5h abaixo da sua meta de 20h." dismissible />
-          <VAlert variant="info"    title="IA analisando seu padrão"    message="A agenda inteligente será atualizada em instantes." dismissible />
-        </div>
 
         <!-- Modal -->
         <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Modal</p>
@@ -379,20 +370,22 @@ toast.add({ severity: 'info', summary: 'Título', detail: 'Mensagem', life: 3000
               </button>
             </div>
             <div class="space-y-4">
-              <VInput label="Título" placeholder="Ex: Revisão Ativa" />
+              <DsInput label="Título" placeholder="Ex: Revisão Ativa" />
               <div class="grid grid-cols-2 gap-3">
-                <VInput label="Data"    placeholder="DD/MM/AAAA" />
-                <VInput label="Horário" placeholder="08:00" />
+                <DsInput label="Data"    placeholder="DD/MM/AAAA" />
+                <DsInput label="Horário" placeholder="08:00" />
               </div>
-              <VSelect
+              <DsSelect
                 label="Disciplina"
-                :options="disciplineOptions"
-                :model-value="disciplineOptions[0]?.value"
+                :options="disciplines"
+                optionLabel="label"
+                optionValue="value"
+                :model-value="disciplines[0]?.value"
               />
             </div>
             <div class="flex gap-3 mt-6">
-              <VButton variant="secondary" class="flex-1">Cancelar</VButton>
-              <VButton variant="primary"   class="flex-1">Criar Evento</VButton>
+              <DsButton severity="secondary" class="flex-1" label="Cancelar" />
+              <DsButton severity="primary"   class="flex-1" label="Criar Evento" />
             </div>
           </div>
           <div class="h-8"></div>
