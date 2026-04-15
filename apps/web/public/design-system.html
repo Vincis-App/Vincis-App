@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html class="light" lang="pt-br">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vincis — Design System</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "background": "#fdf9f6",
+          "surface-variant": "#e5e2df",
+          "error": "#ba1a1a",
+          "on-error": "#ffffff",
+          "on-tertiary-fixed-variant": "#42474f",
+          "inverse-on-surface": "#f4f0ed",
+          "on-surface": "#1c1b1a",
+          "outline-variant": "#d0c5af",
+          "secondary-container": "#e5e2de",
+          "surface-dim": "#ddd9d6",
+          "on-primary-fixed-variant": "#574500",
+          "on-secondary-fixed-variant": "#474744",
+          "on-primary-fixed": "#241a00",
+          "error-container": "#ffdad6",
+          "inverse-primary": "#e9c349",
+          "surface-container-high": "#ebe7e4",
+          "tertiary-fixed-dim": "#c2c7d0",
+          "secondary-fixed-dim": "#c8c6c3",
+          "surface-container-lowest": "#ffffff",
+          "on-secondary-fixed": "#1c1c1a",
+          "surface": "#fdf9f6",
+          "on-primary": "#ffffff",
+          "surface-bright": "#fdf9f6",
+          "primary-container": "#d4af37",
+          "primary-fixed": "#ffe088",
+          "on-secondary-container": "#656461",
+          "primary": "#735c00",
+          "tertiary": "#595f67",
+          "inverse-surface": "#31302f",
+          "on-primary-container": "#554300",
+          "tertiary-container": "#aeb3bc",
+          "on-background": "#1c1b1a",
+          "on-tertiary": "#ffffff",
+          "surface-container-highest": "#e5e2df",
+          "surface-container-low": "#f7f3f0",
+          "outline": "#7f7663",
+          "on-error-container": "#93000a",
+          "secondary-fixed": "#e5e2de",
+          "tertiary-fixed": "#dee3ec",
+          "surface-container": "#f1edea",
+          "surface-tint": "#735c00",
+          "on-surface-variant": "#4d4635",
+          "on-secondary": "#ffffff",
+          "secondary": "#5f5e5c",
+          "on-tertiary-fixed": "#171c23",
+          "on-tertiary-container": "#40454d",
+          "primary-fixed-dim": "#e9c349",
+          "success": "#2e7d32",
+          "success-container": "#c8e6c9",
+          "on-success": "#ffffff",
+          "warning": "#e65100",
+          "warning-container": "#ffe0b2",
+          "on-warning": "#ffffff",
+        },
+        fontFamily: {
+          "headline": ["Newsreader"],
+          "body": ["Manrope"],
+          "label": ["Manrope"]
+        },
+        borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  body { font-family: 'Manrope', sans-serif; background: #fdf9f6; }
+  h1, h2, h3, h4, .font-serif { font-family: 'Newsreader', serif; }
+
+  /* Section title rule */
+  .ds-section-label {
+    font-family: 'Manrope', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #7f7663;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ds-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #d0c5af;
+    opacity: 0.5;
+  }
+
+  /* Spinner for loading state */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(115, 92, 0, 0.2);
+    border-top-color: #554300;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* Toast animation */
+  @keyframes slideIn {
+    from { transform: translateX(110%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  .toast { animation: slideIn 0.35s cubic-bezier(.22,1,.36,1) both; }
+
+  /* Modal overlay */
+  .modal-overlay {
+    background: rgba(28,27,26,0.45);
+    backdrop-filter: blur(4px);
+  }
+
+  /* Sidebar nav active */
+  .nav-active {
+    background: #d4af37;
+    color: #554300;
+    font-style: italic;
+  }
+
+  /* Focus ring */
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #735c00;
+  }
+
+  /* Progress bar */
+  .progress-bar { transition: width 0.6s ease; }
+
+  /* Chip hover */
+  .chip { transition: background 0.15s, color 0.15s; }
+</style>
+</head>
+<body class="text-on-surface min-h-screen">
+
+<!-- ═══════════════════════════════════════
+     TOP HEADER
+═══════════════════════════════════════ -->
+<header class="sticky top-0 z-50 bg-[#fdf9f6] border-b border-outline-variant/20 shadow-[0_4px_24px_rgba(28,27,26,0.05)]">
+  <div class="max-w-5xl mx-auto px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-primary-container flex items-center justify-center rounded-lg shadow-sm">
+        <span class="text-on-primary-container font-serif font-bold text-lg">V</span>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold font-serif text-on-surface leading-none">Vincis</h1>
+        <p class="text-[9px] text-secondary font-label tracking-widest uppercase">Design System</p>
+      </div>
+    </div>
+    <nav class="hidden sm:flex items-center gap-1 text-xs font-label font-semibold text-secondary">
+      <a href="#typography" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Tipo</a>
+      <a href="#colors" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Cores</a>
+      <a href="#buttons" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Botões</a>
+      <a href="#inputs" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Inputs</a>
+      <a href="#cards" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Cards</a>
+      <a href="#navigation" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Nav</a>
+      <a href="#feedback" class="px-3 py-1.5 hover:bg-surface-container rounded transition-colors">Feedback</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════
+     HERO INTRO
+═══════════════════════════════════════ -->
+<div class="max-w-5xl mx-auto px-8 pt-16 pb-12">
+  <p class="text-xs font-label font-bold text-primary uppercase tracking-widest mb-3">v1.0.0 — Referência Visual</p>
+  <h1 class="font-serif font-extrabold text-5xl sm:text-6xl text-on-surface leading-[1.05] mb-5">
+    Vincis<br/><em class="font-normal text-primary">Design System</em>
+  </h1>
+  <p class="text-base text-secondary max-w-xl leading-relaxed">
+    Todos os componentes, tokens e padrões visuais da plataforma Vincis em um único lugar.
+    Use esta página como contexto para garantir 100% de consistência nas telas geradas.
+  </p>
+</div>
+
+<div class="max-w-5xl mx-auto px-8 pb-24 space-y-24">
+
+  <!-- ═══════════════════════════════════════
+       1. TIPOGRAFIA
+  ═══════════════════════════════════════ -->
+  <section id="typography">
+    <div class="ds-section-label">01 — Tipografia</div>
+
+    <!-- Font families display -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+      <div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+        <p class="text-[9px] font-label font-bold text-secondary uppercase tracking-widest mb-3">Headline · Newsreader</p>
+        <p class="font-serif text-3xl font-bold text-on-surface leading-tight mb-1">Abc Defg</p>
+        <p class="font-serif text-xl italic text-primary">Itálico Elegante</p>
+        <p class="font-serif text-sm text-secondary mt-3">Títulos, Display, Números grandes</p>
+      </div>
+      <div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+        <p class="text-[9px] font-label font-bold text-secondary uppercase tracking-widest mb-3">Body & Label · Manrope</p>
+        <p class="font-body text-3xl font-bold text-on-surface leading-tight mb-1">Abc Defg</p>
+        <p class="font-body text-xl font-medium text-secondary">400 · 500 · 700</p>
+        <p class="font-body text-sm text-secondary mt-3">Parágrafos, Labels, UI text</p>
+      </div>
+    </div>
+
+    <!-- Type scale -->
+    <div class="space-y-6 p-8 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">Display · Newsreader 800 · 56px</p>
+        <h1 class="font-serif font-extrabold text-5xl text-on-surface leading-none">Planejamento</h1>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">H1 · Newsreader 700 · 40px</p>
+        <h1 class="font-serif font-bold text-4xl text-on-surface">Outubro 2023</h1>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">H2 · Newsreader 700 · 30px</p>
+        <h2 class="font-serif font-bold text-3xl text-on-surface">Agenda Inteligente</h2>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">H3 · Newsreader 700 · 24px</p>
+        <h3 class="font-serif font-bold text-2xl text-on-surface">Linha do Tempo</h3>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">H4 · Newsreader 600 · 18px</p>
+        <h4 class="font-serif font-bold text-lg text-on-surface">Estudo Dirigido — Fenomenologia da Percepção</h4>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">Body Large · Manrope 400 · 16px</p>
+        <p class="font-body text-base text-on-surface leading-relaxed max-w-xl">
+          Otimize suas janelas de estudo baseando-se no seu ritmo circadiano e metas de disciplina. A IA analisa seu histórico de produtividade.
+        </p>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">Body Small · Manrope 400 · 14px</p>
+        <p class="font-body text-sm text-secondary leading-relaxed max-w-xl">
+          Fenomenologia da Percepção — Cap. 3 · Flashcards: Lógica Formal e Simbólica
+        </p>
+      </div>
+      <div class="pb-6 border-b border-outline-variant/10">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">Label / Caption · Manrope 700 · 10px · UPPERCASE</p>
+        <p class="font-label text-[10px] font-bold text-secondary uppercase tracking-widest">08:00 — 10:00 · Premium Member · Foco Semanal</p>
+      </div>
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-2">Italic Accent · Newsreader 400 italic</p>
+        <p class="font-serif italic text-base text-secondary">Redação da Tese — Introdução</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       2. PALETA DE CORES
+  ═══════════════════════════════════════ -->
+  <section id="colors">
+    <div class="ds-section-label">02 — Paleta de Cores</div>
+
+    <!-- Primary -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Primária — Ouro Acadêmico</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#735c00]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">primary</p>
+          <p class="text-[9px] text-secondary font-mono">#735c00</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-primary</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#d4af37]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">primary-container</p>
+          <p class="text-[9px] text-secondary font-mono">#d4af37</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-primary-container</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#e9c349]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">primary-fixed-dim</p>
+          <p class="text-[9px] text-secondary font-mono">#e9c349</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-primary-fixed-dim</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#ffe088]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">primary-fixed</p>
+          <p class="text-[9px] text-secondary font-mono">#ffe088</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-primary-fixed</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Secundária — Cinza Sábio</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#5f5e5c]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">secondary</p>
+          <p class="text-[9px] text-secondary font-mono">#5f5e5c</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-secondary</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#e5e2de]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">secondary-container</p>
+          <p class="text-[9px] text-secondary font-mono">#e5e2de</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-secondary-container</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#595f67]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">tertiary</p>
+          <p class="text-[9px] text-secondary font-mono">#595f67</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-tertiary</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-20 bg-[#aeb3bc]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">tertiary-container</p>
+          <p class="text-[9px] text-secondary font-mono">#aeb3bc</p>
+          <p class="text-[9px] text-secondary mt-0.5">bg-tertiary-container</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Surfaces -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Superfícies — Camadas de Profundidade</p>
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8">
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#ffffff]"></div>
+        <div class="p-2 bg-surface-container-lowest">
+          <p class="text-[9px] font-bold leading-tight">lowest</p>
+          <p class="text-[8px] text-secondary font-mono">#ffffff</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#f7f3f0]"></div>
+        <div class="p-2 bg-surface-container-lowest">
+          <p class="text-[9px] font-bold leading-tight">low</p>
+          <p class="text-[8px] text-secondary font-mono">#f7f3f0</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#f1edea]"></div>
+        <div class="p-2 bg-surface-container-lowest">
+          <p class="text-[9px] font-bold leading-tight">container</p>
+          <p class="text-[8px] text-secondary font-mono">#f1edea</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#ebe7e4]"></div>
+        <div class="p-2 bg-surface-container-lowest">
+          <p class="text-[9px] font-bold leading-tight">high</p>
+          <p class="text-[8px] text-secondary font-mono">#ebe7e4</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#e5e2df]"></div>
+        <div class="p-2 bg-surface-container-lowest">
+          <p class="text-[9px] font-bold leading-tight">highest</p>
+          <p class="text-[8px] text-secondary font-mono">#e5e2df</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#31302f]"></div>
+        <div class="p-2 bg-surface-container-lowest">
+          <p class="text-[9px] font-bold leading-tight">inverse</p>
+          <p class="text-[8px] text-secondary font-mono">#31302f</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Semantic -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Semânticas — Estado e Feedback</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#2e7d32]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">Sucesso</p>
+          <p class="text-[9px] text-secondary font-mono">#2e7d32</p>
+          <p class="text-[9px] text-secondary">bg-success</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#ba1a1a]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">Erro</p>
+          <p class="text-[9px] text-secondary font-mono">#ba1a1a</p>
+          <p class="text-[9px] text-secondary">bg-error</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#e65100]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">Alerta</p>
+          <p class="text-[9px] text-secondary font-mono">#e65100</p>
+          <p class="text-[9px] text-secondary">bg-warning</p>
+        </div>
+      </div>
+      <div class="rounded-xl overflow-hidden border border-outline-variant/10">
+        <div class="h-14 bg-[#735c00]"></div>
+        <div class="p-3 bg-surface-container-lowest">
+          <p class="text-[10px] font-bold">Info</p>
+          <p class="text-[9px] text-secondary font-mono">#735c00 · primary</p>
+          <p class="text-[9px] text-secondary">bg-primary</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       3. BOTÕES
+  ═══════════════════════════════════════ -->
+  <section id="buttons">
+    <div class="ds-section-label">03 — Botões</div>
+
+    <div class="p-8 bg-surface-container-lowest rounded-xl border border-outline-variant/20 space-y-8">
+
+      <!-- Primário -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Primário — Ação Principal</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary font-label font-bold text-sm rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg">auto_awesome</span>
+            Automatizar Agenda
+          </button>
+          <button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary font-label font-bold text-sm rounded-lg hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg">add</span>
+            Novo Evento
+          </button>
+          <button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary font-label font-bold text-sm rounded-lg opacity-40 cursor-not-allowed" disabled>
+            Desabilitado
+          </button>
+          <button class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary font-label font-bold text-sm rounded-lg opacity-80 cursor-wait">
+            <span class="spinner"></span>
+            Carregando...
+          </button>
+        </div>
+      </div>
+
+      <!-- Primário Container (Golden) -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Primário Container — Ouro Destaque</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button class="flex items-center gap-2 px-6 py-2.5 bg-primary-container text-on-primary-container font-label font-bold text-sm rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">bolt</span>
+            Automatizar Agenda
+          </button>
+          <button class="flex items-center gap-2 px-6 py-2.5 bg-primary-container text-on-primary-container font-label font-bold text-sm rounded-xl active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-lg">auto_awesome</span>
+            Gerar com IA
+          </button>
+        </div>
+      </div>
+
+      <!-- Secundário -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Secundário — Ação Auxiliar</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-highest text-on-surface border border-primary/30 font-label font-medium text-sm rounded-lg hover:bg-primary-container transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg">add</span>
+            Novo Evento
+          </button>
+          <button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-highest text-on-surface border border-outline-variant/40 font-label font-medium text-sm rounded-lg hover:bg-surface-container-high transition-all">
+            <span class="material-symbols-outlined text-lg">chevron_left</span>
+            Anterior
+          </button>
+          <button class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-highest text-on-surface border border-outline-variant/40 font-label font-medium text-sm rounded-lg opacity-40 cursor-not-allowed" disabled>
+            Desabilitado
+          </button>
+        </div>
+      </div>
+
+      <!-- Ghost / Text -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Ghost / Text — Ação Terciária</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button class="flex items-center gap-2 px-4 py-2 text-primary font-label font-semibold text-sm hover:bg-primary/5 rounded-lg transition-colors">
+            Ver todos
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+          <button class="flex items-center gap-2 px-4 py-2 text-secondary font-label font-semibold text-sm hover:bg-surface-container rounded-lg transition-colors">
+            <span class="material-symbols-outlined text-lg">notifications</span>
+          </button>
+          <button class="p-2 text-secondary hover:text-primary transition-colors active:scale-95">
+            <span class="material-symbols-outlined">account_circle</span>
+          </button>
+          <button class="p-2 hover:bg-surface-container-high rounded transition-colors">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- FAB / Mobile -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">FAB — Ação Flutuante (Mobile)</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <div class="bg-primary p-3 rounded-full shadow-lg border-4 border-background inline-flex">
+            <span class="material-symbols-outlined text-white">add</span>
+          </div>
+          <div class="bg-primary-container p-3 rounded-full shadow-lg inline-flex">
+            <span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">bolt</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danger -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Destrutivo — Ação de Risco</p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <button class="flex items-center gap-2 px-5 py-2.5 bg-error text-on-error font-label font-bold text-sm rounded-lg hover:opacity-90 active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-lg">delete</span>
+            Excluir Evento
+          </button>
+          <button class="flex items-center gap-2 px-5 py-2.5 bg-error-container text-on-error-container border border-error/20 font-label font-medium text-sm rounded-lg hover:bg-error/10 transition-all">
+            Cancelar Assinatura
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       4. INPUTS
+  ═══════════════════════════════════════ -->
+  <section id="inputs">
+    <div class="ds-section-label">04 — Inputs & Formulários</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+
+      <!-- Text Inputs -->
+      <div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant/20 space-y-5">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest">Campos de Texto</p>
+
+        <!-- Normal -->
+        <div>
+          <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Título do Evento</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-lg">event_note</span>
+            <input type="text" placeholder="Ex: Estudo Dirigido" class="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 pl-10 pr-4 text-sm font-body focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" value=""/>
+          </div>
+          <p class="text-[10px] text-secondary mt-1">Estado: Default</p>
+        </div>
+
+        <!-- Focus (simulated) -->
+        <div>
+          <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Pesquisar notas</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary text-lg">search</span>
+            <input type="text" value="Fenomenologia" class="w-full bg-surface-container-low border-2 border-primary rounded-lg py-2.5 pl-10 pr-4 text-sm font-body" style="box-shadow: 0 0 0 3px rgba(115,92,0,0.12);"/>
+          </div>
+          <p class="text-[10px] text-primary font-semibold mt-1">Estado: Focus</p>
+        </div>
+
+        <!-- Error -->
+        <div>
+          <label class="block text-xs font-label font-semibold text-error mb-1.5">Data de Entrega</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-error text-lg">calendar_today</span>
+            <input type="text" value="32/13/2023" class="w-full bg-error-container/30 border-2 border-error rounded-lg py-2.5 pl-10 pr-4 text-sm font-body text-error"/>
+          </div>
+          <p class="text-[10px] text-error font-semibold mt-1">
+            <span class="material-symbols-outlined text-[11px]">error</span>
+            Data inválida. Use o formato DD/MM/AAAA.
+          </p>
+        </div>
+
+        <!-- Disabled -->
+        <div>
+          <label class="block text-xs font-label font-semibold text-secondary/60 mb-1.5">Campo Somente Leitura</label>
+          <input type="text" value="Dr. Aris V. — Premium Member" disabled class="w-full bg-surface-container-high/60 border border-outline-variant/20 rounded-lg py-2.5 px-4 text-sm font-body text-secondary/60 cursor-not-allowed"/>
+          <p class="text-[10px] text-secondary/60 mt-1">Estado: Desabilitado</p>
+        </div>
+
+        <!-- Textarea -->
+        <div>
+          <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Descrição / Anotações</label>
+          <textarea rows="3" placeholder="Adicione notas sobre esta sessão de estudo..." class="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 px-4 text-sm font-body focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Select, Checkbox, Radio, Toggle -->
+      <div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant/20 space-y-5">
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest">Selects & Controles</p>
+
+        <!-- Select -->
+        <div>
+          <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Disciplina</label>
+          <div class="relative">
+            <select class="w-full appearance-none bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 pl-4 pr-10 text-sm font-body focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+              <option>Filosofia Analítica</option>
+              <option>Fenomenologia</option>
+              <option>Lógica Formal</option>
+              <option>Ética e Política</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-secondary text-lg pointer-events-none">expand_more</span>
+          </div>
+        </div>
+
+        <!-- Checkboxes -->
+        <div>
+          <p class="text-xs font-label font-semibold text-on-surface-variant mb-3">Tipos de Sessão</p>
+          <div class="space-y-2.5">
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <div class="w-5 h-5 rounded bg-primary flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-white text-sm" style="font-size:14px;">check</span>
+              </div>
+              <span class="text-sm font-body text-on-surface">Estudo Dirigido</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <div class="w-5 h-5 rounded border-2 border-outline-variant flex items-center justify-center flex-shrink-0 group-hover:border-primary transition-colors">
+              </div>
+              <span class="text-sm font-body text-secondary">Revisão Ativa</span>
+            </label>
+            <label class="flex items-center gap-3 cursor-pointer group">
+              <div class="w-5 h-5 rounded bg-primary flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-white" style="font-size:14px;">check</span>
+              </div>
+              <span class="text-sm font-body text-on-surface">Escrita Acadêmica</span>
+            </label>
+            <label class="flex items-center gap-3 opacity-40 cursor-not-allowed">
+              <div class="w-5 h-5 rounded border-2 border-outline-variant/50 flex-shrink-0"></div>
+              <span class="text-sm font-body text-secondary">Indisponível</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Toggle -->
+        <div>
+          <p class="text-xs font-label font-semibold text-on-surface-variant mb-3">Toggles</p>
+          <div class="space-y-3">
+            <label class="flex items-center justify-between cursor-pointer">
+              <span class="text-sm font-body text-on-surface">Agenda Inteligente</span>
+              <div class="relative w-10 h-5 bg-primary rounded-full">
+                <div class="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all"></div>
+              </div>
+            </label>
+            <label class="flex items-center justify-between cursor-pointer">
+              <span class="text-sm font-body text-secondary">Notificações</span>
+              <div class="relative w-10 h-5 bg-outline-variant/40 rounded-full">
+                <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Search bar (como aparece no header) -->
+        <div>
+          <p class="text-xs font-label font-semibold text-on-surface-variant mb-2">Search Bar (Header)</p>
+          <div class="relative">
+            <input type="text" placeholder="Pesquisar notas..." class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm w-full focus:ring-1 focus:ring-primary"/>
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-lg">search</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       5. CARDS & CONTAINERS
+  ═══════════════════════════════════════ -->
+  <section id="cards">
+    <div class="ds-section-label">05 — Cards & Containers</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+      <!-- Card: Timeline Item (Active) -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Timeline Card — Ativo</p>
+        <div class="relative pl-8">
+          <div class="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-primary bg-background z-10"></div>
+          <div class="absolute left-[7px] top-0 bottom-0 w-0.5 bg-outline-variant/30"></div>
+          <div class="p-4 bg-surface-container-lowest rounded-[10px] border border-primary/40 shadow-sm">
+            <span class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1 block">08:00 — 10:00</span>
+            <h4 class="font-serif font-bold text-on-surface text-lg">Estudo Dirigido</h4>
+            <p class="text-xs text-secondary mt-1">Fenomenologia da Percepção — Cap. 3</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Timeline Item (Pending) -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Timeline Card — Pendente</p>
+        <div class="relative pl-8">
+          <div class="absolute left-0 top-1.5 w-4 h-4 rounded-full border-2 border-outline-variant bg-background z-10"></div>
+          <div class="absolute left-[7px] top-0 bottom-0 w-0.5 bg-outline-variant/30"></div>
+          <div class="p-4 bg-surface-container-low/50 rounded-[10px] border border-dashed border-outline-variant/50">
+            <span class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1 block">15:00 — 17:00</span>
+            <h4 class="font-serif font-bold text-secondary text-lg">Escrita Acadêmica</h4>
+            <p class="text-xs text-secondary/60 mt-1 italic">Redação da Tese — Introdução</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: AI Dark -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">AI Card — Dark Surface</p>
+        <div class="relative overflow-hidden bg-on-surface p-6 rounded-2xl shadow-xl">
+          <div class="absolute -right-12 -top-12 w-48 h-48 bg-primary opacity-10 rounded-full blur-3xl"></div>
+          <div class="relative z-10 flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-primary-container flex items-center justify-center rounded-xl">
+                <span class="material-symbols-outlined text-on-primary-container" style="font-variation-settings: 'FILL' 1;">bolt</span>
+              </div>
+              <h3 class="text-surface-bright font-serif text-lg font-bold">Agenda Inteligente</h3>
+            </div>
+            <p class="text-surface-variant text-xs leading-relaxed">Otimize suas janelas de estudo baseando-se no seu ritmo circadiano.</p>
+            <button class="w-full py-2.5 bg-primary-container text-on-primary-container font-bold text-sm rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2">
+              <span>Automatizar</span>
+              <span class="material-symbols-outlined text-base">auto_awesome</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Stats -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Stats Card</p>
+        <div class="p-6 bg-surface-container-low rounded-2xl border border-outline-variant/10">
+          <h4 class="text-xs font-bold text-on-surface mb-4 uppercase tracking-wider font-sans">Foco Semanal</h4>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-xs mb-1.5">
+                <span class="text-secondary">Meta: 20h</span>
+                <span class="font-bold">14.5h</span>
+              </div>
+              <div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full progress-bar" style="width: 72%;"></div>
+              </div>
+              <p class="text-[9px] text-secondary mt-1">72% concluído</p>
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-1">
+              <div class="p-3 bg-surface-container-lowest rounded-xl">
+                <p class="text-[9px] text-secondary uppercase font-bold">Streak</p>
+                <p class="text-xl font-serif font-bold">12 Dias</p>
+              </div>
+              <div class="p-3 bg-surface-container-lowest rounded-xl">
+                <p class="text-[9px] text-secondary uppercase font-bold">Eficiência</p>
+                <p class="text-xl font-serif font-bold">94%</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Calendar Event -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Calendar Event Chip</p>
+        <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/15 overflow-hidden">
+          <div class="p-3 border-b border-outline-variant/10">
+            <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-2">Semana atual</p>
+            <div class="grid grid-cols-4 gap-1.5">
+              <div class="p-2 bg-primary/5 rounded-lg">
+                <p class="text-[10px] font-bold text-primary underline decoration-2">11</p>
+                <div class="mt-1 p-1 bg-primary-container text-on-primary-container text-[9px] rounded font-bold text-center">Revisão</div>
+              </div>
+              <div class="p-2 rounded-lg">
+                <p class="text-[10px] font-bold text-on-surface">12</p>
+              </div>
+              <div class="p-2 rounded-lg">
+                <p class="text-[10px] font-bold text-on-surface">13</p>
+                <div class="mt-1 p-1 bg-secondary-container text-on-secondary-container text-[9px] rounded border border-outline-variant/20 text-center">Seminário</div>
+              </div>
+              <div class="p-2 rounded-lg">
+                <p class="text-[10px] font-bold text-on-surface">14</p>
+              </div>
+            </div>
+          </div>
+          <div class="p-2 text-center">
+            <p class="text-[9px] text-secondary font-label">Calendar Grid — border-outline-variant/5</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: User Profile Chip -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">User Profile Chip & Tags</p>
+        <div class="space-y-4">
+          <div class="flex items-center gap-3 p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/10 shadow-sm w-fit">
+            <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center font-serif font-bold text-on-primary-container">A</div>
+            <div>
+              <p class="text-sm font-bold">Dr. Aris V.</p>
+              <p class="text-[9px] text-secondary uppercase tracking-widest font-bold">Premium Member</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-2.5 py-0.5 bg-primary-container text-on-primary-container text-[9px] font-bold rounded-[10px] shadow-sm">Filosofia</span>
+            <span class="px-2.5 py-0.5 bg-secondary-container text-on-secondary-container text-[9px] font-bold rounded-[10px] border border-outline-variant/20">Seminário</span>
+            <span class="px-2.5 py-0.5 bg-surface-container-low text-[9px] font-bold rounded uppercase">Importante</span>
+            <span class="px-2.5 py-0.5 bg-success-container text-success text-[9px] font-bold rounded-full">Concluído</span>
+            <span class="px-2.5 py-0.5 bg-error-container text-on-error-container text-[9px] font-bold rounded-full">Atrasado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Container Anatomy -->
+    <div class="p-6 bg-surface-container-lowest rounded-xl border border-outline-variant/20">
+      <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-5">Anatomia dos Containers — Bordas, Shadow e Padding</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-xs">
+        <div>
+          <div class="p-5 bg-surface-container-lowest rounded-[10px] border border-outline-variant/10 shadow-sm mb-2">
+            <p class="font-serif text-sm font-bold">Card Base</p>
+            <p class="text-secondary text-[10px] mt-1">rounded-[10px] · border-outline-variant/10 · shadow-sm · p-4</p>
+          </div>
+        </div>
+        <div>
+          <div class="p-5 bg-surface-container-lowest rounded-xl border border-outline-variant/20 shadow-md mb-2">
+            <p class="font-serif text-sm font-bold">Card Elevado</p>
+            <p class="text-secondary text-[10px] mt-1">rounded-xl · border-outline-variant/20 · shadow-md · p-6</p>
+          </div>
+        </div>
+        <div>
+          <div class="p-5 bg-surface-container-low rounded-2xl border border-outline-variant/10 mb-2">
+            <p class="font-serif text-sm font-bold">Card Section</p>
+            <p class="text-secondary text-[10px] mt-1">rounded-2xl · bg-surface-container-low · p-6</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       6. NAVEGAÇÃO
+  ═══════════════════════════════════════ -->
+  <section id="navigation">
+    <div class="ds-section-label">06 — Navegação</div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+
+      <!-- Sidebar -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Sidebar Nav (Desktop)</p>
+        <div class="w-full bg-surface-container-low rounded-xl p-5 space-y-1 border border-outline-variant/15">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-9 h-9 bg-primary-container flex items-center justify-center rounded-lg shadow-sm">
+              <span class="text-on-primary-container font-serif font-bold text-lg">V</span>
+            </div>
+            <div>
+              <p class="text-base font-bold text-on-surface font-serif">Vincis</p>
+              <p class="text-[9px] text-secondary font-label tracking-wide uppercase">Academic Portal</p>
+            </div>
+          </div>
+          <a class="flex items-center gap-3 px-4 py-2.5 text-secondary font-serif hover:bg-surface-bright transition-all rounded-lg">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm">Dashboard</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-2.5 text-secondary font-serif hover:bg-surface-bright transition-all rounded-lg">
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="text-sm">Disciplinas</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-2.5 bg-primary-container text-on-surface font-serif italic rounded-lg">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_note</span>
+            <span class="text-sm">Planejamento</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-2.5 text-secondary font-serif hover:bg-surface-bright transition-all rounded-lg">
+            <span class="material-symbols-outlined">settings</span>
+            <span class="text-sm">Configurações</span>
+          </a>
+          <div class="pt-4 mt-2 border-t border-outline-variant/15">
+            <p class="text-[9px] text-secondary font-bold uppercase tracking-widest mb-1 px-1">Regras do Nav:</p>
+            <p class="text-[9px] text-secondary px-1">Ativo: bg-primary-container · italic · icon FILL=1</p>
+            <p class="text-[9px] text-secondary px-1">Inativo: text-secondary · hover:bg-surface-bright</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Bottom Nav -->
+      <div>
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3">Bottom Nav (Mobile)</p>
+        <div class="bg-surface-bright rounded-xl border border-outline-variant/15 overflow-hidden">
+          <div class="flex justify-around items-center p-4 border-b border-outline-variant/10">
+            <button class="flex flex-col items-center gap-1 text-secondary hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">dashboard</span>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Dash</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 text-primary">
+              <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">event_note</span>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Plan</span>
+            </button>
+            <div class="bg-primary p-3 rounded-full -mt-8 shadow-lg border-4 border-background">
+              <span class="material-symbols-outlined text-white">add</span>
+            </div>
+            <button class="flex flex-col items-center gap-1 text-secondary hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">menu_book</span>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Livros</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 text-secondary hover:text-primary transition-colors">
+              <span class="material-symbols-outlined">settings</span>
+              <span class="text-[10px] font-bold uppercase tracking-tighter">Ajuste</span>
+            </button>
+          </div>
+          <div class="p-3">
+            <p class="text-[9px] text-secondary">FAB central: bg-primary · rounded-full · border-4 border-background · -mt-10</p>
+            <p class="text-[9px] text-secondary mt-0.5">Ativo: text-primary · icon FILL=1 · Inativo: text-secondary</p>
+          </div>
+        </div>
+
+        <!-- Top Header Sample -->
+        <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-3 mt-6">Top Header</p>
+        <div class="bg-[#fdf9f6] rounded-xl border border-outline-variant/15 overflow-hidden shadow-[0_4px_20px_rgba(28,27,26,0.05)]">
+          <div class="flex justify-between items-center px-5 py-3">
+            <h1 class="font-serif font-bold text-lg tracking-tight text-on-surface">PLANEJAMENTO</h1>
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <input class="bg-surface-container-low border-none rounded-full py-1.5 pl-8 pr-3 text-xs focus:ring-1 focus:ring-primary w-36 transition-all" placeholder="Pesquisar..."/>
+                <span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-secondary" style="font-size:16px;">search</span>
+              </div>
+              <button class="p-1.5 text-secondary hover:text-primary transition-colors"><span class="material-symbols-outlined">notifications</span></button>
+            </div>
+          </div>
+          <div class="px-5 pb-2">
+            <p class="text-[9px] text-secondary">sticky top-0 · z-50 · shadow-[0_10px_40px_rgba(28,27,26,0.05)] · bg-[#fdf9f6]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       7. FEEDBACK — TOASTS & MODAIS
+  ═══════════════════════════════════════ -->
+  <section id="feedback">
+    <div class="ds-section-label">07 — Feedback Visual</div>
+
+    <!-- Toasts -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Toasts / Notificações</p>
+    <div class="space-y-3 mb-10">
+
+      <!-- Success Toast -->
+      <div class="toast flex items-start gap-3 px-4 py-3 bg-surface-container-lowest rounded-xl border border-success/20 shadow-lg max-w-sm">
+        <div class="w-8 h-8 bg-success-container rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-success" style="font-size:18px; font-variation-settings: 'FILL' 1;">check_circle</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-on-surface">Evento criado com sucesso!</p>
+          <p class="text-xs text-secondary mt-0.5">Filosofia Analítica adicionado ao dia 11.</p>
+        </div>
+        <button class="text-secondary hover:text-on-surface ml-1"><span class="material-symbols-outlined text-lg">close</span></button>
+      </div>
+
+      <!-- Error Toast -->
+      <div class="toast flex items-start gap-3 px-4 py-3 bg-surface-container-lowest rounded-xl border border-error/20 shadow-lg max-w-sm" style="animation-delay: 0.08s">
+        <div class="w-8 h-8 bg-error-container rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-error" style="font-size:18px; font-variation-settings: 'FILL' 1;">error</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-on-surface">Falha ao sincronizar</p>
+          <p class="text-xs text-secondary mt-0.5">Verifique sua conexão e tente novamente.</p>
+        </div>
+        <button class="text-secondary hover:text-on-surface ml-1"><span class="material-symbols-outlined text-lg">close</span></button>
+      </div>
+
+      <!-- Warning Toast -->
+      <div class="toast flex items-start gap-3 px-4 py-3 bg-surface-container-lowest rounded-xl border border-warning/20 shadow-lg max-w-sm" style="animation-delay: 0.16s">
+        <div class="w-8 h-8 bg-warning-container rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-warning" style="font-size:18px; font-variation-settings: 'FILL' 1;">warning</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-on-surface">Meta semanal em risco</p>
+          <p class="text-xs text-secondary mt-0.5">Você está 5.5h abaixo da sua meta de 20h.</p>
+        </div>
+        <button class="text-secondary hover:text-on-surface ml-1"><span class="material-symbols-outlined text-lg">close</span></button>
+      </div>
+
+      <!-- Info Toast -->
+      <div class="toast flex items-start gap-3 px-4 py-3 bg-surface-container-lowest rounded-xl border border-primary/20 shadow-lg max-w-sm" style="animation-delay: 0.24s">
+        <div class="w-8 h-8 bg-primary-fixed rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-primary" style="font-size:18px; font-variation-settings: 'FILL' 1;">info</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold text-on-surface">IA analisando seu padrão</p>
+          <p class="text-xs text-secondary mt-0.5">A agenda inteligente será atualizada em instantes.</p>
+        </div>
+        <button class="text-secondary hover:text-on-surface ml-1"><span class="material-symbols-outlined text-lg">close</span></button>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4">Modal</p>
+    <div class="relative rounded-2xl overflow-hidden border border-outline-variant/20">
+      <!-- Simulated overlay bg -->
+      <div class="absolute inset-0 modal-overlay rounded-2xl"></div>
+      <!-- Modal box -->
+      <div class="relative z-10 m-6 sm:m-10 bg-surface-container-lowest rounded-2xl shadow-2xl p-6 max-w-sm mx-auto">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif font-bold text-xl text-on-surface">Novo Evento</h3>
+          <button class="p-1.5 text-secondary hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Título</label>
+            <input type="text" placeholder="Ex: Revisão Ativa" class="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 px-4 text-sm font-body"/>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Data</label>
+              <input type="text" placeholder="DD/MM/AAAA" class="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 px-3 text-sm font-body"/>
+            </div>
+            <div>
+              <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Horário</label>
+              <input type="text" placeholder="08:00" class="w-full bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 px-3 text-sm font-body"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-label font-semibold text-on-surface-variant mb-1.5">Disciplina</label>
+            <div class="relative">
+              <select class="w-full appearance-none bg-surface-container-low border border-outline-variant/40 rounded-lg py-2.5 pl-4 pr-10 text-sm font-body">
+                <option>Filosofia Analítica</option>
+                <option>Fenomenologia</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-secondary text-lg pointer-events-none">expand_more</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-6">
+          <button class="flex-1 px-5 py-2.5 bg-surface-container-highest text-on-surface border border-outline-variant/40 font-label font-medium text-sm rounded-lg hover:bg-surface-container-high transition-all">
+            Cancelar
+          </button>
+          <button class="flex-1 px-5 py-2.5 bg-primary text-on-primary font-label font-bold text-sm rounded-lg hover:opacity-90 active:scale-95 transition-all">
+            Criar Evento
+          </button>
+        </div>
+      </div>
+      <!-- Padding below modal for visual -->
+      <div class="h-8"></div>
+    </div>
+
+    <!-- Empty / Loading States -->
+    <p class="text-[9px] font-bold text-secondary uppercase tracking-widest mb-4 mt-10">Estados Vazios & Loading</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="p-8 bg-surface-container-lowest rounded-xl border border-outline-variant/15 border-dashed flex flex-col items-center justify-center gap-3 text-center">
+        <span class="material-symbols-outlined text-4xl text-outline-variant" style="font-variation-settings: 'FILL' 0;">event_note</span>
+        <p class="font-serif font-bold text-on-surface">Nenhum evento hoje</p>
+        <p class="text-xs text-secondary max-w-[200px]">Adicione um evento de estudo para começar seu dia.</p>
+        <button class="flex items-center gap-2 px-4 py-2 bg-primary-container text-on-primary-container font-label font-bold text-sm rounded-lg mt-1">
+          <span class="material-symbols-outlined text-base">add</span>
+          Criar Evento
+        </button>
+      </div>
+      <div class="p-8 bg-surface-container-lowest rounded-xl border border-outline-variant/15 flex flex-col items-center justify-center gap-4">
+        <div class="flex gap-1.5">
+          <div class="w-2 h-2 bg-primary rounded-full animate-bounce" style="animation-delay:0s"></div>
+          <div class="w-2 h-2 bg-primary-container rounded-full animate-bounce" style="animation-delay:0.15s"></div>
+          <div class="w-2 h-2 bg-primary-fixed-dim rounded-full animate-bounce" style="animation-delay:0.3s"></div>
+        </div>
+        <div class="space-y-2 w-full px-4">
+          <div class="h-3 bg-surface-container-high rounded animate-pulse"></div>
+          <div class="h-3 bg-surface-container-high rounded animate-pulse w-4/5"></div>
+          <div class="h-3 bg-surface-container-high rounded animate-pulse w-3/5"></div>
+        </div>
+        <p class="text-xs text-secondary font-label">Loading skeleton state</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       8. TOKENS DE DESIGN — REFERÊNCIA RÁPIDA
+  ═══════════════════════════════════════ -->
+  <section id="tokens">
+    <div class="ds-section-label">08 — Tokens & Referência Rápida para IA</div>
+
+    <div class="p-6 bg-on-surface rounded-2xl border border-outline-variant/10 text-surface-bright">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-primary-container" style="font-size:18px; font-variation-settings: 'FILL' 1;">bolt</span>
+        </div>
+        <h3 class="font-serif font-bold text-xl">Guia rápido para IA gerar telas</h3>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs font-mono">
+        <div class="space-y-2">
+          <p class="font-label font-bold text-primary-container uppercase tracking-widest text-[9px] mb-3">Fontes</p>
+          <p class="text-surface-variant">Títulos/Display → <span class="text-primary-fixed">font-serif (Newsreader)</span></p>
+          <p class="text-surface-variant">UI / Corpo → <span class="text-primary-fixed">font-body / font-label (Manrope)</span></p>
+          <p class="text-surface-variant">Labels caps → <span class="text-primary-fixed">text-[10px] font-bold uppercase tracking-widest</span></p>
+          <p class="text-surface-variant">Ativo em nav → <span class="text-primary-fixed">font-serif italic</span></p>
+        </div>
+        <div class="space-y-2">
+          <p class="font-label font-bold text-primary-container uppercase tracking-widest text-[9px] mb-3">Superfícies (mais escuro = mais elevado)</p>
+          <p class="text-surface-variant">Fundo global → <span class="text-primary-fixed">bg-background (#fdf9f6)</span></p>
+          <p class="text-surface-variant">Cards base → <span class="text-primary-fixed">bg-surface-container-lowest</span></p>
+          <p class="text-surface-variant">Sidebar → <span class="text-primary-fixed">bg-surface-container-low</span></p>
+          <p class="text-surface-variant">Hover/pressed → <span class="text-primary-fixed">bg-surface-container-high</span></p>
+        </div>
+        <div class="space-y-2">
+          <p class="font-label font-bold text-primary-container uppercase tracking-widest text-[9px] mb-3">Bordas & Radius</p>
+          <p class="text-surface-variant">Divisores sutis → <span class="text-primary-fixed">border-outline-variant/10 ou /15</span></p>
+          <p class="text-surface-variant">Cards → <span class="text-primary-fixed">rounded-xl (0.75rem)</span></p>
+          <p class="text-surface-variant">Seções → <span class="text-primary-fixed">rounded-2xl (1rem)</span></p>
+          <p class="text-surface-variant">Pills/tags → <span class="text-primary-fixed">rounded-full</span></p>
+          <p class="text-surface-variant">Timeline items → <span class="text-primary-fixed">rounded-[10px]</span></p>
+        </div>
+        <div class="space-y-2">
+          <p class="font-label font-bold text-primary-container uppercase tracking-widest text-[9px] mb-3">Interação</p>
+          <p class="text-surface-variant">Press → <span class="text-primary-fixed">active:scale-95 transition-all</span></p>
+          <p class="text-surface-variant">Focus ring → <span class="text-primary-fixed">focus:ring-2 focus:ring-primary/50</span></p>
+          <p class="text-surface-variant">Hover texto → <span class="text-primary-fixed">hover:text-primary transition-colors</span></p>
+          <p class="text-surface-variant">Hover bg → <span class="text-primary-fixed">hover:bg-surface-bright transition-all</span></p>
+          <p class="text-surface-variant">Icons → <span class="text-primary-fixed">Material Symbols Outlined</span></p>
+          <p class="text-surface-variant">Icon ativo → <span class="text-primary-fixed">FILL=1</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer class="border-t border-outline-variant/20 mt-4">
+  <div class="max-w-5xl mx-auto px-8 py-8 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 bg-primary-container flex items-center justify-center rounded-lg">
+        <span class="text-on-primary-container font-serif font-bold text-sm">V</span>
+      </div>
+      <span class="font-serif font-bold text-on-surface">Vincis Design System</span>
+      <span class="text-secondary text-sm">v1.0.0</span>
+    </div>
+    <p class="text-xs text-secondary font-label">Rota: <span class="font-mono bg-surface-container px-2 py-0.5 rounded">/design-system</span></p>
+  </div>
+</footer>
+
+</body>
+</html>

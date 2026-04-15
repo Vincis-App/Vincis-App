@@ -23,6 +23,13 @@ const router = createRouter({
       path: '/private',
       name: 'private',
       component: () => import('../views/PrivateView.vue')
+    },
+    {
+      path: '/old-ds',
+      name: 'old-ds',
+      beforeEnter() {
+        window.location.href = '/design-system.html'
+      }
     }
   ],
 })
