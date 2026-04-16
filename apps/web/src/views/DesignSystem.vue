@@ -78,6 +78,7 @@ const showInfoToast = () => {
           <a href="#cards">Cards</a>
           <a href="#navigation">Nav</a>
           <a href="#feedback">Feedback</a>
+          <a href="#timeline">Timeline</a>
         </nav>
       </div>
     </header>
@@ -406,6 +407,46 @@ toast.add({ severity: 'info', summary: 'Título', detail: 'Mensagem', life: 3000
               <p class="empty-state__message">Adicione um evento de estudo para começar seu dia.</p>
               <DsButton label="Criar Evento" severity="primary" icon="pi pi-plus" />
             </div>
+          </DsCard>
+        </div>
+      </section>
+
+      <!-- 08. TIMELINE -->
+      <section id="timeline" class="ds-section">
+        <div class="ds-section-label">08 — Timeline / Agenda</div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <DsCard>
+            <p class="ds-meta-label mb-6">Visualização de Eventos</p>
+            <div class="space-y-2">
+              <DsTimelineItem 
+                time="08:00 — 10:00" 
+                title="Filosofia Analítica" 
+                subtitle="Leitura de 'Sobre a Denotação' (Russell)" 
+                active 
+              />
+              <DsTimelineItem 
+                time="10:30 — 12:00" 
+                title="Lógica Formal" 
+                subtitle="Exercícios de dedução natural" 
+              />
+              <DsTimelineItem 
+                time="14:00 — 16:00" 
+                title="Fenomenologia" 
+                subtitle="Análise da consciência do tempo interno" 
+                pending
+              />
+            </div>
+          </DsCard>
+          
+          <DsCard>
+            <p class="ds-meta-label mb-4">Uso do Componente</p>
+            <pre class="code-block"><code>&lt;DsTimelineItem 
+  time="08:00 — 10:00" 
+  title="Título" 
+  subtitle="Sub-título" 
+  active 
+/&gt;</code></pre>
           </DsCard>
         </div>
       </section>
