@@ -11,8 +11,9 @@ import DsCheckbox from '@/components/ui/DsCheckbox.vue'
 import DsToggle from '@/components/ui/DsToggle.vue'
 import DsToast from '@/components/ui/DsToast.vue'
 import DsModal from '@/components/ui/DsModal.vue'
-import DsTimelineItem from '@/components/ui/DsTimelineItem.vue'
+import DsTimelineItem from '@/components/ui/DsTimeLineItem.vue'
 import DsChip from '@/components/ui/DsChip.vue'
+
 
 
 
