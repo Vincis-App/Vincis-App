@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../lib/axios'
 import { VCard, VButton, VBadge, VInput, VSelect } from '../components/ui'
+import { useStudyPlanStore } from '../stores/study-plan'
 
 const router = useRouter()
+const studyPlanStore = useStudyPlanStore()
 const isLoading = ref(true)
 const user = ref<any>(null)
 const studyPlans = ref<any>([])
-const currentStudyPlan = ref(0)
+const currentStudyPlan = ref<number>(0)
 
 const studyPlanName = ref("")
 const studyPlanDesc = ref("")
@@ -23,7 +25,17 @@ onMounted(async () => {
     const studyPlansRes = await api.get('/study-plans')
     studyPlans.value = studyPlansRes.data
 
-    currentStudyPlan.value = studyPlans.value[0]?.id ?? 0
+    if (studyPlanStore.activePlanId) {
+      // Already selected in this session — just sync the dropdown
+      currentStudyPlan.value = studyPlanStore.activePlanId
+    } else {
+      // Nothing active yet — default to the first plan
+      const firstPlan = studyPlans.value[0]
+      if (firstPlan) {
+        currentStudyPlan.value = firstPlan.id
+        await studyPlanStore.selectPlan(firstPlan.id, firstPlan.name)
+      }
+    }
   } catch (error: any) {
     console.error(error)
     errorMsg.value = 'Acesso não autorizado. Redirecionando para login...'
@@ -40,6 +52,9 @@ const logout = async () => {
     // Por enquanto redirecionamos. (Simulando)
     document.cookie = "access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie = "refresh_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+    // Limpa as informações do plano de estudo quando faz logout.
+    studyPlanStore.clearPlan()
     router.push('/auth')
 }
 
@@ -50,7 +65,11 @@ const createStudyPlan = async () => {
       description: studyPlanDesc.value,
       is_active: true
     })
-    studyPlans.value.push(res.data.studyPlan)
+    const newPlan = res.data.studyPlan
+    studyPlans.value.push(newPlan)
+    currentStudyPlan.value = newPlan.id  // triggers watch → selectPlan
+    studyPlanName.value = ''
+    studyPlanDesc.value = ''
   } catch (error: any) {
     console.error(error)
   }
@@ -59,6 +78,36 @@ const createStudyPlan = async () => {
 const currentStudyPlanData = computed(() =>
   studyPlans.value.find((p: any) => p.id === currentStudyPlan.value)
 )
+
+const selectStudyPlan = async () => {
+  const plan = currentStudyPlanData.value
+  if (!plan) return
+  try {
+    await studyPlanStore.selectPlan(plan.id, plan.name)
+  } catch (error: any) {
+    console.error(error)
+  }
+}
+
+watch(currentStudyPlan, () => {
+  selectStudyPlan()
+})
+
+const testResult = ref<any>(null)
+const isTesting = ref(false)
+
+const testMiddleware = async () => {
+  isTesting.value = true
+  testResult.value = null
+  try {
+    const res = await api.get('/study-plans/test')
+    testResult.value = res.data
+  } catch (error: any) {
+    testResult.value = { error: error.response?.data?.message ?? error.message }
+  } finally {
+    isTesting.value = false
+  }
+}
 </script>
 
 <template>
@@ -119,7 +168,13 @@ const currentStudyPlanData = computed(() =>
             <VSelect v-model="currentStudyPlan" :options="studyPlans" optionLabel="name" optionValue="id" />
           </div>
           <div>
-            <p>Seu plano de estudo atual: {{ currentStudyPlanData?.name }}</p>
+            <p>Plano ativo na store: <strong>{{ studyPlanStore.activePlanName ?? 'Nenhum' }}</strong> (ID: {{ studyPlanStore.activePlanId ?? '—' }})</p>
+          </div>
+          <div class="flex flex-col gap-3 mt-4 border-t border-outline-variant/10 pt-4">
+            <VButton @click="testMiddleware" :disabled="isTesting">
+              {{ isTesting ? 'Testando...' : 'Testar Middleware /test' }}
+            </VButton>
+            <pre v-if="testResult" class="text-xs bg-surface-container p-3 rounded-lg overflow-auto">{{ JSON.stringify(testResult, null, 2) }}</pre>
           </div>
         </VCard>
       </div>
