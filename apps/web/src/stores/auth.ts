@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const DEFAULT_USER = {
@@ -8,15 +8,27 @@ const DEFAULT_USER = {
   avatar: 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
 }
 
+const STORAGE_KEY = 'vincis_auth_state'
+
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter()
-  const user = ref<any>({ ...DEFAULT_USER })
   
-  const isAuthenticated = ref(false)
+  // Load initial state from localStorage
+  const savedState = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null')
+  
+  const user = ref<any>(savedState?.user || { ...DEFAULT_USER })
+  const isAuthenticated = ref(savedState?.isAuthenticated || false)
+
+  // Watch for changes and save to localStorage
+  watch([user, isAuthenticated], () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      user: user.value,
+      isAuthenticated: isAuthenticated.value
+    }))
+  }, { deep: true })
 
   function login(userData: any) {
     isAuthenticated.value = true
-    // Always merge with DEFAULT_USER to ensure all required fields exist
     user.value = {
       ...DEFAULT_USER,
       ...(userData || {})
@@ -26,7 +38,7 @@ export const useAuthStore = defineStore('auth', () => {
   function logout() {
     isAuthenticated.value = false
     user.value = { ...DEFAULT_USER }
-    // Clean up local storage or other persistence if any
+    localStorage.removeItem(STORAGE_KEY)
     router.push('/auth')
   }
 
