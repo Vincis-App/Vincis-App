@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma.js'
-import type { CreateUserInput, CreateUserFromAuthInput, UpdateUserInput } from './user.types.js'
+import type { CreateUserInput, CreateUserFromAuthInput, UpdateUserInput } from './user.schema.js'
 
 export const userService = {
     list() {

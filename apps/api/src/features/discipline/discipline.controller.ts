@@ -1,7 +1,9 @@
 import { disciplineService } from "./discipline.service.js";
 import { Request, Response } from "express";
-import { CreateDisciplineInput, UpdateDisciplineInput } from "./discipline.types.js";
+import { CreateDisciplineInput, UpdateDisciplineInput } from "./discipline.schema.js";
 import { StudyPlanInjectedRequest } from "../study-plan/study-plan.middleware.js";
+
+const parseId = (raw: string) => Number(raw);
 
 export async function createDiscipline(req: Request, res: Response) {
     try {
@@ -34,9 +36,11 @@ export async function getDisciplines(req: Request, res: Response) {
 export async function getDisciplineById(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { id } = req.params;
+        const id = parseId(req.params.id);
+        if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
-        const discipline = await disciplineService.getDisciplineById(Number(id), studyPlanId);
+        const discipline = await disciplineService.getDisciplineById(id, studyPlanId);
         
         if (!discipline) {
             return res.status(404).json({ message: "Disciplina não encontrada." });
@@ -51,11 +55,13 @@ export async function getDisciplineById(req: Request, res: Response) {
 export async function updateDiscipline(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { id } = req.params;
+        const id = parseId(req.params.id);
+        if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
         const { name, color, weight } = req.body as UpdateDisciplineInput;
 
-        const discipline = await disciplineService.updateDiscipline(Number(id), studyPlanId, { name, color, weight });
+        const discipline = await disciplineService.updateDiscipline(id, studyPlanId, { name, color, weight });
         
         return res.status(200).json({
             message: "Disciplina atualizada com sucesso.",
@@ -72,10 +78,12 @@ export async function updateDiscipline(req: Request, res: Response) {
 export async function deleteDiscipline(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { id } = req.params;
+        const id = parseId(req.params.id);
+        if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
 
-        await disciplineService.deleteDiscipline(Number(id), studyPlanId);
+        await disciplineService.deleteDiscipline(id, studyPlanId);
         
         return res.status(204).send();
     } catch (err: any) {

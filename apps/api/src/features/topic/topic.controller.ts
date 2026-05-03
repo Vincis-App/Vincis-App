@@ -1,7 +1,9 @@
 import { topicService } from "./topic.service.js";
 import { Request, Response } from "express";
-import { CreateTopicInput, UpdateTopicInput } from "./topic.types.js";
+import { CreateTopicInput, UpdateTopicInput } from "./topic.schema.js";
 import { StudyPlanInjectedRequest } from "../study-plan/study-plan.middleware.js";
+
+const parseId = (raw: string) => Number(raw);
 
 export async function createTopic(req: Request, res: Response) {
     try {
@@ -26,10 +28,12 @@ export async function createTopic(req: Request, res: Response) {
 export async function getTopicsByDiscipline(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { disciplineId } = req.params;
+        const disciplineId = parseId(req.params.disciplineId);
+        if (Number.isNaN(disciplineId)) return res.status(400).json({ message: "ID da disciplina inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
 
-        const topics = await topicService.getTopicsByDiscipline(Number(disciplineId), studyPlanId);
+        const topics = await topicService.getTopicsByDiscipline(disciplineId, studyPlanId);
         return res.status(200).json(topics);
     } catch (err: any) {
         if (err.message.includes("não encontrada")) {
@@ -42,10 +46,12 @@ export async function getTopicsByDiscipline(req: Request, res: Response) {
 export async function getTopicById(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { id } = req.params;
+        const id = parseId(req.params.id);
+        if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
         
-        const topic = await topicService.getTopicById(Number(id), studyPlanId);
+        const topic = await topicService.getTopicById(id, studyPlanId);
         
         if (!topic) {
             return res.status(404).json({ message: "Tópico não encontrado." });
@@ -60,11 +66,13 @@ export async function getTopicById(req: Request, res: Response) {
 export async function updateTopic(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { id } = req.params;
+        const id = parseId(req.params.id);
+        if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
         const { name, description, isCompleted } = req.body as UpdateTopicInput;
 
-        const topic = await topicService.updateTopic(Number(id), studyPlanId, { name, description, isCompleted });
+        const topic = await topicService.updateTopic(id, studyPlanId, { name, description, isCompleted });
         
         return res.status(200).json({
             message: "Tópico atualizado com sucesso.",
@@ -81,10 +89,12 @@ export async function updateTopic(req: Request, res: Response) {
 export async function deleteTopic(req: Request, res: Response) {
     try {
         const injectedReq = req as StudyPlanInjectedRequest;
-        const { id } = req.params;
+        const id = parseId(req.params.id);
+        if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido." });
+
         const studyPlanId = injectedReq.studyPlan!.id;
 
-        await topicService.deleteTopic(Number(id), studyPlanId);
+        await topicService.deleteTopic(id, studyPlanId);
         
         return res.status(204).send();
     } catch (err: any) {
