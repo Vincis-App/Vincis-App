@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { api } from '../lib/axios'
+import { MaybeRef, unref, computed } from 'vue'
 
 export interface Discipline {
     id: number
@@ -48,7 +49,6 @@ export const useUpdateDisciplineMutation = () => {
         },
         onSuccess: (updatedDiscipline) => {
             queryClient.invalidateQueries({ queryKey: ['disciplines'] })
-            // Optional: update detail queries if we had them
         }
     })
 }
@@ -66,15 +66,16 @@ export const useDeleteDisciplineMutation = () => {
 }
 
 // Topics
-export const useTopicsQuery = (disciplineId: number | undefined) => {
+export const useTopicsQuery = (disciplineId: MaybeRef<number | undefined>) => {
     return useQuery({
-        queryKey: ['topics', disciplineId],
+        queryKey: computed(() => ['topics', unref(disciplineId)]),
         queryFn: async () => {
-            if (!disciplineId) return []
-            const { data } = await api.get<Topic[]>(`/topics/discipline/${disciplineId}`)
+            const id = unref(disciplineId)
+            if (!id) return []
+            const { data } = await api.get<Topic[]>(`/topics/discipline/${id}`)
             return data
         },
-        enabled: !!disciplineId
+        enabled: computed(() => !!unref(disciplineId))
     })
 }
 

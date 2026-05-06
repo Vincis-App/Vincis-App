@@ -41,7 +41,7 @@ const panelName = ref('')
 const panelColor = ref('')
 
 // Topics query
-const topicsQuery = useTopicsQuery(selectedDisciplineId.value ?? undefined)
+const topicsQuery = useTopicsQuery(selectedDisciplineId)
 const topics = computed(() => topicsQuery.data.value || [])
 const isLoadingTopics = computed(() => topicsQuery.isLoading.value)
 
@@ -232,8 +232,8 @@ async function saveTopicEdit(topicId: number) {
 
                     <div class="flex gap-3 justify-end pt-2">
                         <VButton variant="secondary" @click="showCreateForm = false">Cancelar</VButton>
-                        <VButton variant="primary" :disabled="createDisciplineMutation.isPending.value || !newName.trim()" @click="createDiscipline">
-                            {{ createDisciplineMutation.isPending.value ? 'Criando...' : 'Criar Disciplina' }}
+                        <VButton variant="primary" :disabled="createDisciplineMutation.isPending || !newName.trim()" @click="createDiscipline">
+                            {{ createDisciplineMutation.isPending ? 'Criando...' : 'Criar Disciplina' }}
                         </VButton>
                     </div>
                 </div>
@@ -344,9 +344,9 @@ async function saveTopicEdit(topicId: number) {
                                     <span>Baixo</span><span>Alto</span>
                                 </div>
                             </div>
-                            <VButton variant="secondary" :disabled="updateDisciplineMutation.isPending.value" @click="saveDisciplineInfo"
+                            <VButton variant="secondary" :disabled="updateDisciplineMutation.isPending" @click="saveDisciplineInfo"
                                 style="width:100%">
-                                {{ updateDisciplineMutation.isPending.value ? 'Salvando...' : 'Salvar Altera&#231;&#245;es' }}
+                                {{ updateDisciplineMutation.isPending ? 'Salvando...' : 'Salvar Altera&#231;&#245;es' }}
                             </VButton>
                         </div>
                     </details>
@@ -391,9 +391,9 @@ async function saveTopicEdit(topicId: number) {
                                             icon="notes" />
                                         <div class="flex gap-2">
                                             <VButton variant="primary"
-                                                :disabled="updateTopicMutation.isPending.value || !editTopicName.trim()"
+                                                :disabled="updateTopicMutation.isPending || !editTopicName.trim()"
                                                 @click="saveTopicEdit(topic.id)" style="flex:1">
-                                                {{ updateTopicMutation.isPending.value ? 'Salvando...' : 'Salvar' }}
+                                                {{ updateTopicMutation.isPending ? 'Salvando...' : 'Salvar' }}
                                             </VButton>
                                             <VButton variant="secondary" @click="cancelTopicEdit" style="flex:1">
                                                 Cancelar</VButton>
@@ -412,9 +412,9 @@ async function saveTopicEdit(topicId: number) {
                             <VInput v-model="newTopicName" placeholder="Nome do tópico..." icon="edit_note" />
                             <VInput v-model="newTopicDesc" placeholder="Descri&#231;&#227;o (opcional)..."
                                 icon="notes" />
-                            <VButton variant="primary" :disabled="createTopicMutation.isPending.value || !newTopicName.trim()"
+                            <VButton variant="primary" :disabled="createTopicMutation.isPending || !newTopicName.trim()"
                                 @click="addTopic">
-                                {{ createTopicMutation.isPending.value ? 'Adicionando...' : 'Adicionar Tópico' }}
+                                {{ createTopicMutation.isPending ? 'Adicionando...' : 'Adicionar Tópico' }}
                             </VButton>
                         </div>
                     </div>

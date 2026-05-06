@@ -133,9 +133,9 @@ watch(currentStudyPlanId, (newId) => {
                 <VButton 
                     @click="handleCreateStudyPlan" 
                     class="w-full"
-                    :disabled="createStudyPlanMutation.isPending.value"
+                    :disabled="createStudyPlanMutation.isPending"
                 >
-                    {{ createStudyPlanMutation.isPending.value ? 'Criando...' : 'Criar Plano de Estudo' }}
+                    {{ createStudyPlanMutation.isPending ? 'Criando...' : 'Criar Plano de Estudo' }}
                 </VButton>
             </div>
         </VCard>
