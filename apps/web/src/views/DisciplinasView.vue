@@ -1,81 +1,169 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { api } from '../lib/axios'
-import { VCard, VButton, VSpinner } from '../components/ui'
+import { ref, computed } from 'vue'
+import { VCard, VButton, VInput } from '../components/ui'
 import { useStudyPlanStore } from '../stores/study-plan'
-import DisciplinesHeader from '../components/features/disciplines/DisciplinesHeader.vue'
-import CreateDisciplineForm from '../components/features/disciplines/CreateDisciplineForm.vue'
-import DisciplineCard from '../components/features/disciplines/DisciplineCard.vue'
-import DisciplineDetails from '../components/features/disciplines/DisciplineDetails.vue'
+import { 
+    useDisciplinesQuery, 
+    useCreateDisciplineMutation, 
+    useUpdateDisciplineMutation, 
+    useDeleteDisciplineMutation,
+    useTopicsQuery,
+    useCreateTopicMutation,
+    useUpdateTopicMutation,
+    useDeleteTopicMutation
+} from '../hooks/useDisciplines'
 
 const studyPlanStore = useStudyPlanStore()
 
+// ─── Queries ──────────────────────────────────────────────────────────────────
+const disciplinesQuery = useDisciplinesQuery()
+const disciplines = computed(() => disciplinesQuery.data.value || [])
+const isLoading = computed(() => disciplinesQuery.isLoading.value)
+const disciplinesError = computed(() => disciplinesQuery.error.value)
+
+const createDisciplineMutation = useCreateDisciplineMutation()
+const updateDisciplineMutation = useUpdateDisciplineMutation()
+const deleteDisciplineMutation = useDeleteDisciplineMutation()
+
 // ─── State ────────────────────────────────────────────────────────────────────
-const isLoading = ref(true)
-const disciplines = ref<any[]>([])
-const errorMsg = ref('')
+// Create discipline form
 const showCreateForm = ref(false)
+const newName = ref('')
+const newColor = ref('#6366f1')
+const newWeight = ref<number>(1.0)
 
 // Selected discipline panel
-const selectedDiscipline = ref<any>(null)
+const selectedDisciplineId = ref<number | null>(null)
+const selectedDiscipline = computed(() => disciplines.value.find(d => d.id === selectedDisciplineId.value))
 const isPanelOpen = ref(false)
+const panelWeight = ref<number>(1.0)
+const panelName = ref('')
+const panelColor = ref('')
 
-// ─── Lifecycle ────────────────────────────────────────────────────────────────
-onMounted(fetchDisciplines)
+// Topics query
+const topicsQuery = useTopicsQuery(selectedDisciplineId)
+const topics = computed(() => topicsQuery.data.value || [])
+const isLoadingTopics = computed(() => topicsQuery.isLoading.value)
 
-async function fetchDisciplines() {
-    if (!studyPlanStore.hasActivePlan) {
-        isLoading.value = false
-        return
-    }
+const createTopicMutation = useCreateTopicMutation()
+const updateTopicMutation = useUpdateTopicMutation()
+const deleteTopicMutation = useDeleteTopicMutation()
 
-    isLoading.value = true
-    try {
-        const res = await api.get('/disciplines')
-        disciplines.value = res.data
-    } catch (e: any) {
-        errorMsg.value = 'Erro ao carregar disciplinas.'
-    } finally {
-        isLoading.value = false
-    }
-}
+const newTopicName = ref('')
+const newTopicDesc = ref('')
+
+// Topic inline edit
+const editingTopicId = ref<number | null>(null)
+const editTopicName = ref('')
+const editTopicDesc = ref('')
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const PRESET_COLORS = [
+    '#6366f1', '#8b5cf6', '#ec4899', '#ef4444',
+    '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6',
+]
+
+const errorMsg = computed(() => {
+    if (disciplinesError.value) return 'Erro ao carregar disciplinas.'
+    return ''
+})
 
 // ─── Discipline CRUD ──────────────────────────────────────────────────────────
-async function createDiscipline(payload: { name: string; color: string; weight: number }) {
-    try {
-        const res = await api.post('/disciplines', payload)
-        disciplines.value.push(res.data.discipline)
-        showCreateForm.value = false
-    } catch (e: any) {
-        errorMsg.value = 'Erro ao criar disciplina.'
-    }
+async function createDiscipline() {
+    if (!newName.value.trim()) return
+    await createDisciplineMutation.mutateAsync({
+        name: newName.value.trim(),
+        color: newColor.value,
+        weight: newWeight.value
+    })
+    newName.value = ''
+    newColor.value = '#6366f1'
+    newWeight.value = 1.0
+    showCreateForm.value = false
 }
 
 async function deleteDiscipline(id: number) {
-    try {
-        await api.delete(`/disciplines/${id}`)
-        disciplines.value = disciplines.value.filter((d) => d.id !== id)
-        if (selectedDiscipline.value?.id === id) {
-            isPanelOpen.value = false
-            selectedDiscipline.value = null
-        }
-    } catch (e: any) {
-        errorMsg.value = 'Erro ao deletar disciplina.'
-    }
+    await deleteDisciplineMutation.mutateAsync(id)
+    if (selectedDisciplineId.value === id) closePanel()
 }
 
 // ─── Panel (Discipline Detail) ────────────────────────────────────────────────
-async function openPanel(discipline: any) {
-    selectedDiscipline.value = discipline
+function openPanel(discipline: any) {
+    selectedDisciplineId.value = discipline.id
     isPanelOpen.value = true
+    panelWeight.value = discipline.weight ?? 1.0
+    panelName.value = discipline.name
+    panelColor.value = discipline.color
+    newTopicName.value = ''
+    newTopicDesc.value = ''
+    editingTopicId.value = null
 }
 
-function handleDisciplineUpdate(updatedDiscipline: any) {
-    const idx = disciplines.value.findIndex((d) => d.id === updatedDiscipline.id)
-    if (idx !== -1) disciplines.value[idx] = updatedDiscipline
-    if (selectedDiscipline.value?.id === updatedDiscipline.id) {
-        selectedDiscipline.value = updatedDiscipline
-    }
+function closePanel() {
+    isPanelOpen.value = false
+    selectedDisciplineId.value = null
+}
+
+async function addTopic() {
+    if (!newTopicName.value.trim() || !selectedDisciplineId.value) return
+    await createTopicMutation.mutateAsync({
+        name: newTopicName.value.trim(),
+        description: newTopicDesc.value.trim() || undefined,
+        disciplineId: selectedDisciplineId.value
+    })
+    newTopicName.value = ''
+    newTopicDesc.value = ''
+}
+
+async function toggleTopic(topic: any) {
+    await updateTopicMutation.mutateAsync({
+        id: topic.id,
+        isCompleted: !topic.isCompleted,
+        disciplineId: topic.disciplineId
+    })
+}
+
+async function deleteTopic(id: number) {
+    if (!selectedDisciplineId.value) return
+    await deleteTopicMutation.mutateAsync({ id, disciplineId: selectedDisciplineId.value })
+}
+
+const completedCount = computed(() => topics.value.filter((t) => t.isCompleted).length)
+const progress = computed(() =>
+    topics.value.length ? Math.round((completedCount.value / topics.value.length) * 100) : 0
+)
+
+async function saveDisciplineInfo() {
+    if (!selectedDisciplineId.value || !panelName.value.trim()) return
+    await updateDisciplineMutation.mutateAsync({
+        id: selectedDisciplineId.value,
+        name: panelName.value.trim(),
+        color: panelColor.value,
+        weight: panelWeight.value,
+    })
+}
+
+function startEditTopic(topic: any) {
+    editingTopicId.value = topic.id
+    editTopicName.value = topic.name
+    editTopicDesc.value = topic.description ?? ''
+}
+
+function cancelTopicEdit() {
+    editingTopicId.value = null
+    editTopicName.value = ''
+    editTopicDesc.value = ''
+}
+
+async function saveTopicEdit(topicId: number) {
+    if (!editTopicName.value.trim() || !selectedDisciplineId.value) return
+    await updateTopicMutation.mutateAsync({
+        id: topicId,
+        name: editTopicName.value.trim(),
+        description: editTopicDesc.value.trim() || undefined,
+        disciplineId: selectedDisciplineId.value
+    })
+    cancelTopicEdit()
 }
 </script>
 
