@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { api } from '../../../lib/axios'
-import { VInput, VButton } from '../../ui'
+import { VInput, VButton, VSpinner } from '../../ui'
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
 
 const props = defineProps<{
     disciplineId: number;
@@ -65,7 +68,7 @@ async function addTopic() {
         newTopicName.value = ''
         newTopicDesc.value = ''
     } catch (e: any) {
-        // error
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível adicionar o tópico.', life: 3000 })
     } finally {
         isAddingTopic.value = false
     }
@@ -77,7 +80,7 @@ async function toggleTopic(topic: any) {
         const idx = topics.value.findIndex((t) => t.id === topic.id)
         if (idx !== -1) topics.value[idx] = res.data.topic
     } catch (e: any) {
-        // error
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível atualizar o tópico.', life: 3000 })
     }
 }
 
@@ -86,7 +89,7 @@ async function deleteTopic(id: number) {
         await api.delete(`/topics/${id}`)
         topics.value = topics.value.filter((t) => t.id !== id)
     } catch (e: any) {
-        // error
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível deletar o tópico.', life: 3000 })
     }
 }
 
@@ -114,7 +117,7 @@ async function saveTopicEdit(topicId: number) {
         if (idx !== -1) topics.value[idx] = res.data.topic
         cancelTopicEdit()
     } catch (e: any) {
-        // error
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível salvar as alterações.', life: 3000 })
     } finally {
         isSavingTopic.value = false
     }
@@ -141,7 +144,7 @@ const progress = computed(() =>
     <!-- Topics List -->
     <div class="detail__topics">
         <div v-if="isLoadingTopics" class="flex justify-center py-8">
-            <div class="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <VSpinner size="sm" />
         </div>
         <div v-else-if="!topics.length" class="detail__empty">
             <span class="material-symbols-outlined text-4xl text-outline-variant mb-2"

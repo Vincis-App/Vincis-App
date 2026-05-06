@@ -4,6 +4,10 @@ import { api } from '../../../lib/axios'
 import { VInput, VButton } from '../../ui'
 import { PRESET_COLORS } from '../../../helpers/disciplineColors'
 
+import { useToast } from 'primevue/usetoast'
+
+const toast = useToast()
+
 const props = defineProps<{
     discipline: any;
 }>()
@@ -44,7 +48,7 @@ async function saveDisciplineInfo() {
         emit('update:discipline', res.data.discipline)
         isEditOpen.value = false
     } catch (e: any) {
-        // Handle error
+        toast.add({ severity: 'error', summary: 'Erro', detail: 'Não foi possível salvar as alterações da disciplina.', life: 3000 })
     } finally {
         isSavingInfo.value = false
     }

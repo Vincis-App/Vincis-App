@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { api } from '../lib/axios'
-import { VCard, VButton } from '../components/ui'
+import { VCard, VButton, VSpinner } from '../components/ui'
 import { useStudyPlanStore } from '../stores/study-plan'
 import DisciplinesHeader from '../components/features/disciplines/DisciplinesHeader.vue'
 import CreateDisciplineForm from '../components/features/disciplines/CreateDisciplineForm.vue'
@@ -87,9 +87,7 @@ function handleDisciplineUpdate(updatedDiscipline: any) {
             @cancel-create="showCreateForm = false" />
 
         <!-- Loading -->
-        <div v-if="isLoading" class="flex justify-center items-center h-64">
-            <div class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-        </div>
+        <VSpinner v-if="isLoading" class="h-64" />
 
         <!-- Empty State -->
         <div v-else-if="!disciplines.length" class="mt-8">
