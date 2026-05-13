@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { api } from '../lib/axios'
-import { MaybeRef, unref, computed } from 'vue'
+import { unref, computed, type Ref } from 'vue'
+
+type MaybeRef<T> = T | Ref<T>
 
 export interface Discipline {
     id: number

@@ -19,6 +19,7 @@ export async function getUserById(req: Request, res: Response) {
 
     return res.status(200).json(user)
 }
+
 export async function createUser(req: Request, res: Response) {
     const { email, name } = req.body as CreateUserInput
 

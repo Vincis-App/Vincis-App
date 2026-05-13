@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { VCard, VButton, VInput } from '../components/ui'
+import { VCard, VButton, VInput, VSpinner } from '../components/ui'
 import { useStudyPlanStore } from '../stores/study-plan'
+import { useQueryClient } from '@tanstack/vue-query'
 import { 
     useDisciplinesQuery, 
     useCreateDisciplineMutation, 
@@ -13,7 +14,14 @@ import {
     useDeleteTopicMutation
 } from '../hooks/useDisciplines'
 
+// Feature Components
+import DisciplinesHeader from '../components/features/disciplines/DisciplinesHeader.vue'
+import CreateDisciplineForm from '../components/features/disciplines/CreateDisciplineForm.vue'
+import DisciplineCard from '../components/features/disciplines/DisciplineCard.vue'
+import DisciplineDetails from '../components/features/disciplines/DisciplineDetails.vue'
+
 const studyPlanStore = useStudyPlanStore()
+const queryClient = useQueryClient()
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 const disciplinesQuery = useDisciplinesQuery()
@@ -141,6 +149,10 @@ async function saveDisciplineInfo() {
         color: panelColor.value,
         weight: panelWeight.value,
     })
+}
+
+function handleDisciplineUpdate() {
+    queryClient.invalidateQueries({ queryKey: ['disciplines'] })
 }
 
 function startEditTopic(topic: any) {
