@@ -14,3 +14,16 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: false, // Desativado por padrão no servidor, usaremos cookies manualmente ou via adapter por request
   }
 })
+
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseServiceKey) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY e obrigatorio no .env')
+}
+
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  }
+})

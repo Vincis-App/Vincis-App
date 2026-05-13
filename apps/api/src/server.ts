@@ -6,6 +6,7 @@ import { userRouter } from './features/user/user.routes.js'
 import { authRouter } from './features/auth/auth.routes.js'
 import { prisma } from './lib/prisma.js'
 import { studyPlanRouter } from './features/study-plan/study-plan.routes.js'
+import { editalRouter } from './features/edital/edital.routes.js'
 
 import { disciplineRouter } from './features/discipline/discipline.routes.js'
 import { topicRouter } from './features/topic/topic.routes.js'
@@ -20,6 +21,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use(express.json())
 
+
 app.get('/', (_req: Request, res: Response) => {
     return res.send('oie')
 })
@@ -33,6 +35,7 @@ app.use('/auth', authRouter)
 app.use("/study-plans", studyPlanRouter)
 app.use("/disciplines", disciplineRouter)
 app.use("/topics", topicRouter)
+app.use('/editais', editalRouter)
 
 // Verifica conexão com banco antes de escutar na porta
 prisma.$connect()

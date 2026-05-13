@@ -62,6 +62,7 @@ const navItems = [
   { id: 'disciplinas', label: 'Disciplinas', icon: 'subject', path: '/private/disciplinas' },
   { id: 'tasks', label: 'Tarefas', icon: 'task_alt', path: '/private/tasks' },
   { id: 'performance', label: 'Desempenho', icon: 'analytics', path: '/private/performance' },
+  { id: 'edital', label: 'Edital', icon:'text_snippet', path:'/private/edital'}
 ]
 
 const isActive = (path: string) => {
