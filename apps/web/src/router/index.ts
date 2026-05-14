@@ -63,7 +63,13 @@ const router = createRouter({
           path: 'edital',
           name: 'edital',
           component: () =>import('../views/EditalView.vue')
+        },
+        {
+          path: 'planner',
+          name: 'planner',
+          component: () => import('../views/PlannerView.vue')
         }
+
       ]
     },
     {

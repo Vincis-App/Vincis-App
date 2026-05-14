@@ -7,6 +7,8 @@ import { authRouter } from './features/auth/auth.routes.js'
 import { prisma } from './lib/prisma.js'
 import { studyPlanRouter } from './features/study-plan/study-plan.routes.js'
 import { editalRouter } from './features/edital/edital.routes.js'
+import { studyLogRouter } from './features/study-log/study-log.routes.js'
+import { errorLogRouter } from './features/error-log/error-log.routes.js'
 
 import { disciplineRouter } from './features/discipline/discipline.routes.js'
 import { topicRouter } from './features/topic/topic.routes.js'
@@ -36,6 +38,8 @@ app.use("/study-plans", studyPlanRouter)
 app.use("/disciplines", disciplineRouter)
 app.use("/topics", topicRouter)
 app.use('/editais', editalRouter)
+app.use('/study-logs', studyLogRouter)
+app.use('/error-logs', errorLogRouter)
 
 // Verifica conexão com banco antes de escutar na porta
 prisma.$connect()

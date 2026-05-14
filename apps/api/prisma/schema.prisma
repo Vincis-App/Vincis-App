@@ -40,7 +40,11 @@ model Discipline {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   topics      Topic[]
-
+  priority    String?   @default("MEDIUM") // HIGH, MEDIUM, LOW
+  proficiency String?   @default("BEGINNER") // BEGINNER, INTERMEDIATE, ADVANCED
+  active      Boolean   @default(true)
+  studyLogs   StudyLog[]
+  errorLogs   ErrorLog[]
   studyPlan StudyPlan @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
 }
 
@@ -79,4 +83,32 @@ model Edital {
 
   userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+// 2. Crie o modelo StudyLog (transcrito do original)
+model StudyLog {
+  id              Int      @id @default(autoincrement())
+  disciplineId    Int
+  discipline      Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  topicName       String
+  date            DateTime
+  durationMinutes Int
+  questionsCount  Int      @default(0)
+  correctCount    Int      @default(0)
+  notes           String?
+  
+  createdAt       DateTime @default(now())
+}
+// 3. Crie o modelo ErrorLog (transcrito do original)
+model ErrorLog {
+  id             Int      @id @default(autoincrement())
+  disciplineId   Int
+  discipline     Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  topicName      String
+  reason         String   // KNOWLEDGE_GAP, ATTENTION, INTERPRETATION, etc
+  description    String
+  correction     String
+  
+  createdAt      DateTime @default(now())
 }
