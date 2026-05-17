@@ -26,16 +26,13 @@ const queryClient = useQueryClient()
 const { data: disciplinesData, isLoading, error: disciplinesError } = useDisciplinesQuery()
 const disciplines = computed(() => disciplinesData.value || [])
 
-const createDisciplineMutation = useCreateDisciplineMutation()
-const updateDisciplineMutation = useUpdateDisciplineMutation()
-const deleteDisciplineMutation = useDeleteDisciplineMutation()
+const { mutateAsync: createDiscipline, isPending: isCreatingDiscipline } = useCreateDisciplineMutation()
+const { mutateAsync: updateDiscipline } = useUpdateDisciplineMutation()
+const { mutateAsync: deleteDisciplineMutationCall } = useDeleteDisciplineMutation()
 
 // ─── State ────────────────────────────────────────────────────────────────────
 // Create discipline form
 const showCreateForm = ref(false)
-const newName = ref('')
-const newColor = ref('#6366f1')
-const newWeight = ref<number>(1.0)
 
 // Selected discipline panel
 const selectedDisciplineId = ref<number | null>(null)
@@ -74,21 +71,17 @@ const errorMsg = computed(() => {
 })
 
 // ─── Discipline CRUD ──────────────────────────────────────────────────────────
-async function createDiscipline() {
-    if (!newName.value.trim()) return
-    await createDisciplineMutation.mutateAsync({
-        name: newName.value.trim(),
-        color: newColor.value,
-        weight: newWeight.value
+async function handleCreateDiscipline(payload: { name: string, color: string, weight: number }) {
+    await createDiscipline({
+        name: payload.name,
+        color: payload.color,
+        weight: payload.weight
     })
-    newName.value = ''
-    newColor.value = '#6366f1'
-    newWeight.value = 1.0
     showCreateForm.value = false
 }
 
 async function deleteDiscipline(id: number) {
-    await deleteDisciplineMutation.mutateAsync(id)
+    await deleteDisciplineMutationCall(id)
     if (selectedDisciplineId.value === id) closePanel()
 }
 
@@ -180,7 +173,7 @@ async function saveTopicEdit(topicId: number) {
     <div class="disciplinas-view">
         <DisciplinesHeader :error-msg="errorMsg" @create-discipline="showCreateForm = !showCreateForm" />
 
-        <CreateDisciplineForm :showCreateForm="showCreateForm" @create-discipline="createDiscipline"
+        <CreateDisciplineForm :showCreateForm="showCreateForm" :isCreating="isCreatingDiscipline" @create-discipline="handleCreateDiscipline"
             @cancel-create="showCreateForm = false" />
 
         <!-- Loading -->

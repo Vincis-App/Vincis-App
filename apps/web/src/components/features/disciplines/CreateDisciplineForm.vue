@@ -6,9 +6,8 @@ import { PRESET_COLORS } from '../../../helpers/disciplineColors'
 const newName = ref('')
 const newColor = ref('#6366f1')
 const newWeight = ref<number>(1.0)
-const isCreating = ref(false)
 
-const props = defineProps(['showCreateForm'])
+const props = defineProps(['showCreateForm', 'isCreating'])
 const emit = defineEmits(['create-discipline', 'cancel-create'])
 
 function handleCreateDiscipline() {
