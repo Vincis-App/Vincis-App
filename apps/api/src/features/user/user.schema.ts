@@ -13,7 +13,8 @@ export const createAuthUserSchema = z.object({
 
 export const updateUserSchema = z.object({
   email: z.string().email("E-mail inválido.").optional(),
-  name: z.string().optional()
+  name: z.string().optional(),
+  avatar: z.string().optional()
 });
 
 export type CreateUserInput = z.infer<typeof createUserSchema>;

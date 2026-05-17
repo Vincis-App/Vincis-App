@@ -58,10 +58,26 @@ export const useAuthStore = defineStore('auth', () => {
     router.push('/auth')
   }
 
+  async function updateProfile(data: { name?: string, email?: string, avatar?: string }) {
+    if (!user.value || !user.value.id) return
+
+    try {
+      const response = await api.put(`/users/${user.value.id}`, data)
+      user.value = {
+        ...user.value,
+        ...response.data
+      }
+    } catch (err) {
+      console.error('Falha ao atualizar perfil:', err)
+      throw err
+    }
+  }
+
   return {
     user,
     isAuthenticated,
     login,
-    logout
+    logout,
+    updateProfile
   }
 })
