@@ -61,21 +61,21 @@ const router = createRouter({
           component: () => import('../views/ProfileView.vue')
         },
         {
-<<<<<<< HEAD
           path: 'edital',
           name: 'edital',
-          component: () =>import('../views/EditalView.vue')
-=======
+          component: () => import('../views/EditalView.vue')
+        },
+        {
           path: 'error-logs',
           name: 'error-logs',
           component: () => import('../views/ErrorLogsView.vue')
->>>>>>> main
         }
       ]
     },
     {
       path: '/old-ds',
       name: 'old-ds',
+      component: { render: () => null },
       beforeEnter() {
         window.location.href = '/design-system.html'
       }

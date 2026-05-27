@@ -131,3 +131,32 @@ h1, h2, h3, h4, .font-serif {
     opacity: 0.5;
 }
 
+/* ──────────────────────────────────────────────────────────────────
+ * Warning Card Shake and Glow Animations
+ * ────────────────────────────────────────────────────────────────── */
+@keyframes warning-shake {
+  0%, 100% { transform: scale(1); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-6px) scale(1.02); }
+  20%, 40%, 60%, 80% { transform: translateX(6px) scale(1.02); }
+}
+
+@keyframes warning-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.6), 0 0 5px rgba(234, 179, 8, 0.4);
+    border-color: rgba(234, 179, 8, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.9), 0 0 15px rgba(234, 179, 8, 0.7);
+    border-color: rgba(234, 179, 8, 1);
+  }
+}
+
+.animate-warning-shake {
+  animation: warning-shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.animate-warning-glow {
+  animation: warning-pulse-glow 2s infinite ease-in-out;
+}
+
+

@@ -36,19 +36,12 @@ const toggleUserMenu = (event: any) => {
 }
 
 const navItems = [
-<<<<<<< HEAD
-  { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/private' },
-  { id: 'study-plans', label: 'Planos de Estudo', icon: 'auto_stories', path: '/private/study-plans' },
-  { id: 'disciplinas', label: 'Disciplinas', icon: 'subject', path: '/private/disciplinas' },
-  { id: 'tasks', label: 'Tarefas', icon: 'task_alt', path: '/private/tasks' },
-  { id: 'performance', label: 'Desempenho', icon: 'analytics', path: '/private/performance' },
-  { id: 'edital', label: 'Edital', icon:'text_snippet', path:'/private/edital'}
-=======
   { id: 'dashboard', label: 'Dashboard', icon: 'pi-th-large', path: '/private' },
   { id: 'disciplinas', label: 'Disciplinas', icon: 'pi-book', path: '/private/disciplinas' },
+  { id: 'error-logs', label: 'Caderno de Erros', icon: 'pi-exclamation-triangle', path: '/private/error-logs' },
   { id: 'tasks', label: 'Tarefas', icon: 'pi-check-circle', path: '/private/tasks' },
   { id: 'performance', label: 'Desempenho', icon: 'pi-chart-bar', path: '/private/performance' },
->>>>>>> main
+  { id: 'edital', label: 'Edital', icon: 'pi-file-pdf', path: '/private/edital' }
 ]
 
 const isActive = (path: string) => {
@@ -62,7 +55,7 @@ const userInitials = computed(() => {
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map((n: string) => n[0].toUpperCase())
+    .map((n: string) => n[0]?.toUpperCase() || '')
     .join('')
 })
 </script>

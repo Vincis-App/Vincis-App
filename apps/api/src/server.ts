@@ -36,11 +36,8 @@ app.use('/auth', authRouter)
 app.use("/study-plans", studyPlanRouter)
 app.use("/disciplines", disciplineRouter)
 app.use("/topics", topicRouter)
-<<<<<<< HEAD
 app.use('/editais', editalRouter)
-=======
 app.use("/error-logs", errorLogRouter)
->>>>>>> main
 
 // Verifica conexão com banco antes de escutar na porta
 prisma.$connect()

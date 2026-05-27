@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import AppSidebar from '../components/layout/AppSidebar.vue'
 import { useAuthStore } from '../stores/auth'
+import { VToast } from '../components/ui'
 
 const authStore = useAuthStore()
 
@@ -29,6 +30,9 @@ const firstName = computed(() => {
         </router-view>
       </main>
     </div>
+
+    <!-- Global Toast Notifications -->
+    <VToast />
   </div>
 </template>
 

@@ -15,11 +15,8 @@ model User {
   updatedAt  DateTime    @updatedAt
   supabaseId String?     @unique
   studyPlans StudyPlan[]
-<<<<<<< HEAD
-  editais Edital[]
-=======
+  editais    Edital[]
   errorLogs  ErrorLog[]
->>>>>>> main
 }
 
 model StudyPlan {
@@ -31,12 +28,9 @@ model StudyPlan {
   updatedAt   DateTime     @updatedAt
   userId      Int
   disciplines Discipline[]
-<<<<<<< HEAD
-
-=======
-  errorLogs   ErrorLog[]
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
->>>>>>> main
+  errorLogs   ErrorLog[]
+  editais     Edital[]
 }
 
 model Discipline {
@@ -112,4 +106,7 @@ model Edital {
 
   userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  studyPlanId Int
+  studyPlan   StudyPlan @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
 }

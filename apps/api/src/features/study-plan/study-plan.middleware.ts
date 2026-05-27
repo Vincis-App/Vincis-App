@@ -18,18 +18,20 @@ export const injectStudyPlan = async (
         // Se houver ID nos params, busca e injeta o study plan
         const studyPlanId = injectedReq.params?.studyPlanId || injectedReq.query?.studyPlanId
 
-        if (studyPlanId && injectedReq.user?.id) {
+        if (studyPlanId && injectedReq.dbUser?.id) {
             const studyPlan = await studyPlanService.getStudyPlanById(
                 Number(studyPlanId),
-                injectedReq.user.id
+                injectedReq.dbUser.id
             )
             injectedReq.studyPlan = studyPlan || undefined
         }
 
-        return next()
+        next()
+        return
     } catch (error) {
         console.error('Erro ao injetar study plan:', error)
-        return res.status(500).json({ message: 'Erro ao processar study plan' })
+        res.status(500).json({ message: 'Erro ao processar study plan' })
+        return
     }
 }
 
@@ -55,20 +57,23 @@ export const validateStudyPlanMiddleware = async (
 ): Promise<void> => {
     const injectedReq = req as StudyPlanInjectedRequest
     const { studyPlanId } = req.params
-    const userId = (injectedReq.user as any)?.id
+    const userId = injectedReq.dbUser?.id
 
     if (!userId) {
-        return res.status(401).json({ message: 'Usuário não autenticado.' })
+        res.status(401).json({ message: 'Usuário não autenticado.' })
+        return
     }
 
     const studyPlan = await studyPlanService.getStudyPlanById(Number(studyPlanId), userId)
 
     if (!studyPlan) {
-        return res.status(404).json({ message: 'Plano de estudo não encontrado.' })
+        res.status(404).json({ message: 'Plano de estudo não encontrado.' })
+        return
     }
 
     injectedReq.studyPlan = studyPlan
 
-    return next()
+    next()
+    return
 }
 

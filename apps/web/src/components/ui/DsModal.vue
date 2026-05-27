@@ -1,13 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import Dialog from 'primevue/dialog'
 
-defineProps({
-  visible: { type: Boolean, default: false },
-  header: { type: String, default: '' },
-  closable: { type: Boolean, default: true },
-  modal: { type: Boolean, default: true }
-})
-defineEmits(['update:visible'])
+defineProps<{
+  visible?: boolean
+  header?: string
+  closable?: boolean
+  modal?: boolean
+}>()
+
+defineEmits<{
+  (e: 'update:visible', value: boolean): void
+}>()
+
+defineSlots<{
+  default(props: {}): any
+  footer(props: {}): any
+  [key: string]: any
+}>()
 </script>
 
 <template>

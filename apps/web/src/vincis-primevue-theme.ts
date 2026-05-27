@@ -742,22 +742,22 @@ const VincisTheme = definePreset(Aura, {
     // ── Toast / Message ───────────────────────────────────────────
     toast: {
       root: {
-        width: '22rem',
+        width: '26rem',
         gap:   '0.5rem',
       },
       message: {
-        borderRadius: '0.75rem',
-        border:       '1px solid',
-        shadow:       '0 4px 20px rgba(28,27,26,0.12)',
+        borderRadius: '0.875rem',
+        border:       '1.5px solid',
+        shadow:       '0 8px 32px rgba(230,81,0,0.25), 0 2px 8px rgba(28,27,26,0.15)',
         blur:         '0',
-        padding:      '0.75rem 1rem',
-        gap:          '0.75rem',
+        padding:      '1rem 1.125rem',
+        gap:          '0.875rem',
       },
       messageIcon: {
-        size: '1.25rem',
+        size: '1.5rem',
       },
       messageText: {
-        gap: '0.125rem',
+        gap: '0.25rem',
       },
       summary: {
         fontWeight: '700',
@@ -787,12 +787,12 @@ const VincisTheme = definePreset(Aura, {
             iconColor:   color.success,
           },
           warn: {
-            background:  color.surfaceContainerLowest,
-            borderColor: `${color.warning}33`,
-            color:       color.onSurface,
-            detailColor: color.secondary,
-            iconBackground: color.warningContainer,
-            iconColor:   color.warning,
+            background:  color.warning,
+            borderColor: color.primaryContainer,
+            color:       '#ffffff',
+            detailColor: 'rgba(255,255,255,0.85)',
+            iconBackground: 'rgba(255,255,255,0.20)',
+            iconColor:   '#fff3e0',
           },
           error: {
             background:  color.surfaceContainerLowest,

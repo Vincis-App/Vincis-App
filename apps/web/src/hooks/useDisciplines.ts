@@ -73,7 +73,7 @@ export const useDeleteDisciplineMutation = () => {
 }
 
 // Topics
-export const useTopicsQuery = (disciplineId: MaybeRef<number | undefined>) => {
+export const useTopicsQuery = (disciplineId: MaybeRef<number | null | undefined>) => {
     return useQuery({
         queryKey: computed(() => ['topics', unref(disciplineId)]),
         queryFn: async () => {
