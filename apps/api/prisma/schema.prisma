@@ -8,52 +8,85 @@ datasource db {
 
 model User {
   id         Int         @id @default(autoincrement())
-  supabaseId String?     @unique
   email      String      @unique
   name       String?
+  avatar     String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  supabaseId String?     @unique
   studyPlans StudyPlan[]
+<<<<<<< HEAD
   editais Edital[]
+=======
+  errorLogs  ErrorLog[]
+>>>>>>> main
 }
 
 model StudyPlan {
-  id          Int      @id @default(autoincrement())
+  id          Int          @id @default(autoincrement())
   name        String
   description String?
-  is_active   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  is_active   Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userId      Int
   disciplines Discipline[]
+<<<<<<< HEAD
 
+=======
+  errorLogs   ErrorLog[]
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+>>>>>>> main
 }
 
 model Discipline {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
+  description String?
   color       String
-  weight      Float    @default(1.0)
+  weight      Float     @default(1.0)
   studyPlanId Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  studyPlan   StudyPlan @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
   topics      Topic[]
-
-  studyPlan StudyPlan @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
 }
 
 model Topic {
-  id           Int      @id @default(autoincrement())
+  id           Int        @id @default(autoincrement())
   name         String
   description  String?
-  isCompleted  Boolean  @default(false)
+  isCompleted  Boolean    @default(false)
   disciplineId Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  errorLogs    ErrorLog[]
+}
 
-  discipline Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+model ErrorLog {
+  id Int @id @default(autoincrement())
+
+  analise     String // "Por que eu errei?" — campo principal
+  correcao    String? // "Resumo da Correção (Pulo do Gato)"
+  fonte       String? // "Fonte da Questão" (ex: CESPE 2024 - PF)
+  diagnostico String? // "Diagnóstico do Erro" (enum de 5 tipos)
+  topicText   String? // "Tópico / Assunto" em texto livre
+
+  isResolved Boolean   @default(false)
+  resolvedAt DateTime?
+
+  topicId Int?
+  topic   Topic? @relation(fields: [topicId], references: [id], onDelete: SetNull)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  studyPlanId Int
+  studyPlan   StudyPlan @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum EditalStatus {

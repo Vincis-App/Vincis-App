@@ -1,12 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import { api } from '../lib/axios'
-import { MaybeRef, unref, computed } from 'vue'
+import { useStudyPlanStore } from '../stores/study-plan'
+import { unref, computed, type Ref } from 'vue'
+
+type MaybeRef<T> = T | Ref<T>
 
 export interface Discipline {
     id: number
     name: string
+    description?: string
     color: string
     weight: number
+    topics?: { isCompleted: boolean }[]
 }
 
 export interface Topic {
@@ -18,19 +23,21 @@ export interface Topic {
 }
 
 export const useDisciplinesQuery = () => {
+    const studyPlanStore = useStudyPlanStore()
     return useQuery({
         queryKey: ['disciplines'],
         queryFn: async () => {
             const { data } = await api.get<Discipline[]>('/disciplines')
             return data
-        }
+        },
+        enabled: computed(() => studyPlanStore.hasActivePlan)
     })
 }
 
 export const useCreateDisciplineMutation = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async (newDiscipline: Partial<Discipline>) => {
+        mutationFn: async (newDiscipline: Omit<Partial<Discipline>, 'topics'>) => {
             const { data } = await api.post<{ discipline: Discipline }>('/disciplines', newDiscipline)
             return data.discipline
         },

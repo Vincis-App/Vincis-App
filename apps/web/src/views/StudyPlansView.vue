@@ -7,13 +7,11 @@ import { useStudyPlansQuery, useCreateStudyPlanMutation, useSelectStudyPlanMutat
 const studyPlanStore = useStudyPlanStore()
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
-const studyPlansQuery = useStudyPlansQuery()
-const studyPlans = computed(() => studyPlansQuery.data.value || [])
-const isLoading = computed(() => studyPlansQuery.isLoading.value)
-const error = computed(() => studyPlansQuery.error.value)
+const { data: studyPlansData, isLoading, error } = useStudyPlansQuery()
+const studyPlans = computed(() => studyPlansData.value || [])
 
-const createStudyPlanMutation = useCreateStudyPlanMutation()
-const selectStudyPlanMutation = useSelectStudyPlanMutation()
+const { mutateAsync: createStudyPlan, isPending: isCreating } = useCreateStudyPlanMutation()
+const { mutateAsync: selectStudyPlan } = useSelectStudyPlanMutation()
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const currentStudyPlanId = ref<number | null>(studyPlanStore.activePlanId)
@@ -34,7 +32,7 @@ async function handleCreateStudyPlan() {
     if (!studyPlanDesc.value.trim()) return errorMsg.value = 'Descrição do plano de estudo é obrigatória.'
     
     errorMsg.value = ""
-    const newPlan = await createStudyPlanMutation.mutateAsync({
+    const newPlan = await createStudyPlan({
         name: studyPlanName.value.trim(),
         description: studyPlanDesc.value.trim(),
         is_active: true
@@ -48,7 +46,7 @@ async function handleCreateStudyPlan() {
 }
 
 async function handleSelectPlan(id: number, name: string) {
-    await selectStudyPlanMutation.mutateAsync({ id, name })
+    await selectStudyPlan({ id, name })
 }
 
 watch(currentStudyPlanId, (newId) => {
@@ -83,7 +81,7 @@ watch(currentStudyPlanId, (newId) => {
             <h3 class="text-xl font-serif font-bold text-on-surface mb-6">Selecione seu Plano Ativo</h3>
             
             <div v-if="!studyPlans?.length" class="text-center py-12 border-2 border-dashed border-outline-variant/20 rounded-xl">
-                <span class="material-symbols-outlined text-5xl text-outline-variant mb-4">auto_stories</span>
+                <i class="pi pi-book text-5xl text-outline-variant mb-4"></i>
                 <p class="text-secondary">Você ainda não possui planos de estudo criados.</p>
             </div>
 
@@ -108,7 +106,7 @@ watch(currentStudyPlanId, (newId) => {
         <VCard v-if="studyPlanStore.hasActivePlan" class="p-6 bg-primary/5 border-primary/10">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <span class="material-symbols-outlined">check_circle</span>
+                    <i class="pi pi-check-circle "></i>
                 </div>
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-primary">Plano em Foco</p>
@@ -133,9 +131,9 @@ watch(currentStudyPlanId, (newId) => {
                 <VButton 
                     @click="handleCreateStudyPlan" 
                     class="w-full"
-                    :disabled="createStudyPlanMutation.isPending"
+                    :disabled="createStudyPlanMutation.isPending.value"
                 >
-                    {{ createStudyPlanMutation.isPending ? 'Criando...' : 'Criar Plano de Estudo' }}
+                    {{ createStudyPlanMutation.isPending.value ? 'Criando...' : 'Criar Plano de Estudo' }}
                 </VButton>
             </div>
         </VCard>

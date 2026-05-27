@@ -10,6 +10,7 @@ import { editalRouter } from './features/edital/edital.routes.js'
 
 import { disciplineRouter } from './features/discipline/discipline.routes.js'
 import { topicRouter } from './features/topic/topic.routes.js'
+import { errorLogRouter } from './features/error-log/error-log.routes.js'
 
 const PORT = Number(process.env.PORT) || 4000
 const app = express()
@@ -35,7 +36,11 @@ app.use('/auth', authRouter)
 app.use("/study-plans", studyPlanRouter)
 app.use("/disciplines", disciplineRouter)
 app.use("/topics", topicRouter)
+<<<<<<< HEAD
 app.use('/editais', editalRouter)
+=======
+app.use("/error-logs", errorLogRouter)
+>>>>>>> main
 
 // Verifica conexão com banco antes de escutar na porta
 prisma.$connect()
@@ -48,4 +53,4 @@ prisma.$connect()
         console.error('Falha ao conectar no banco:', err)
         process.exit(1)
     })
-
+// Trigger reload to pick up new Prisma Client schema and tables
