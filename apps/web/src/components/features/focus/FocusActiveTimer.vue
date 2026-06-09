@@ -14,6 +14,7 @@ const props = defineProps<{
     strokeDashoffset: number
     radius: number
     circumference: number
+    isRunning?: boolean
 }>()
 
 defineEmits<{
@@ -35,8 +36,8 @@ function formatDuration(seconds: number): string {
         <!-- Discipline Badge -->
         <div
             class="flex items-center gap-3 px-5 py-2.5 rounded-full bg-surface-container-low border border-outline-variant/20">
-            <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedDiscipline?.color }"></div>
-            <span class="text-sm font-bold text-on-surface">{{ selectedDiscipline?.name }}</span>
+            <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: selectedDiscipline?.color || '#888888' }"></div>
+            <span class="text-sm font-bold text-on-surface">{{ selectedDiscipline?.name || 'Selecione uma disciplina' }}</span>
         </div>
 
         <!-- Phase Indicator -->
@@ -78,7 +79,7 @@ function formatDuration(seconds: number): string {
 
         <!-- Controls -->
         <div class="flex items-center gap-4">
-            <button @click="$emit('stop')" class="control-btn control-btn--stop" title="Encerrar sessão">
+            <button @click="$emit('stop')" class="control-btn control-btn--stop" title="Encerrar sessão" :disabled="!isRunning" :class="{ 'opacity-30 cursor-not-allowed': !isRunning }">
                 <i class="pi pi-stop-circle text-lg"></i>
             </button>
 
@@ -87,7 +88,7 @@ function formatDuration(seconds: number): string {
                 <i class="pi text-xl" :class="isPaused ? 'pi-play' : 'pi-pause'"></i>
             </button>
 
-            <button @click="$emit('skip')" class="control-btn control-btn--skip" title="Pular fase">
+            <button @click="$emit('skip')" class="control-btn control-btn--skip" title="Pular fase" :disabled="!isRunning" :class="{ 'opacity-30 cursor-not-allowed': !isRunning }">
                 <i class="pi pi-forward text-lg"></i>
             </button>
         </div>
