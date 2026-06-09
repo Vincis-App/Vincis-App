@@ -9,6 +9,9 @@ export const createFocusSessionSchema = z.object({
   cyclesTarget: z.number({ message: "A quantidade de ciclos é obrigatória." }),
   cyclesCompleted: z.number({ message: "Os ciclos completados são obrigatórios." }),
   isCompleted: z.boolean().default(false),
+  modalities: z.array(z.string()).optional().default([]),
+  questionsDone: z.number().optional().default(0),
+  questionsCorrect: z.number().optional().default(0),
   startedAt: z.string({ message: "A data de início é obrigatória." }),
   finishedAt: z.string().optional(),
 });

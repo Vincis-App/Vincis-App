@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "FocusSession" ADD COLUMN "modalities" TEXT[] DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN "questionsDone" INTEGER NOT NULL DEFAULT 0,
+ADD COLUMN "questionsCorrect" INTEGER NOT NULL DEFAULT 0;

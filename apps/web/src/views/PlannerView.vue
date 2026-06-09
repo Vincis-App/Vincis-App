@@ -56,13 +56,15 @@ const persisted = ref<PersistedSettings>(loadPersisted())
 
 const disciplineConfigs = computed((): DisciplineConfig[] => {
     if (!apiDisciplines.value?.length) return []
-    return apiDisciplines.value.map(d => ({
-        id: d.id,
-        name: d.name,
-        color: d.color,
-        priority: (Math.min(4, Math.max(1, d.weight)) as 1 | 2 | 3 | 4),
-        knowledgeLevel: persisted.value.knowledgeLevels[d.id] ?? 2,
-    }))
+    return apiDisciplines.value
+        .filter(d => d.isActive !== false)
+        .map(d => ({
+            id: d.id,
+            name: d.name,
+            color: d.color,
+            priority: (Math.min(4, Math.max(1, d.weight)) as 1 | 2 | 3 | 4),
+            knowledgeLevel: persisted.value.knowledgeLevels[d.id] ?? 2,
+        }))
 })
 
 // ─── Full settings object (reactive, merged) ──────────────────────────────────

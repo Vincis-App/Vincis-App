@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useFocusSessionsQuery } from '../../../hooks/useFocusSessions'
+import { useDailyProgress } from '../../../hooks/useDailyProgress'
+
+const { minutesStudiedToday, progressPercent, sessionsToday } = useDailyProgress()
 
 const { data: sessionsData, isLoading } = useFocusSessionsQuery()
 
@@ -57,6 +60,21 @@ function formatRelativeDate(isoString: string): string {
         </div>
 
         <div class="history-content relative flex flex-col flex-1 min-h-0">
+            <!-- Daily Summary Card -->
+            <div v-if="!isLoading" class="daily-summary-card mb-4">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-muted">Resumo do Dia</span>
+                    <span class="text-[10px] font-bold text-primary">{{ sessionsToday }} sessões</span>
+                </div>
+                <div class="flex items-end gap-1.5 mb-2">
+                    <span class="text-xl font-black text-on-surface leading-none" style="font-variant-numeric: tabular-nums">{{ minutesStudiedToday }}</span>
+                    <span class="text-[10px] font-bold text-on-surface-muted mb-0.5">min</span>
+                </div>
+                <div class="daily-progress-track">
+                    <div class="daily-progress-fill" :style="{ width: `${progressPercent}%` }"></div>
+                </div>
+            </div>
+
             <div v-if="isLoading" class="flex flex-col items-center justify-center py-8 gap-3 opacity-60">
                 <i class="pi pi-spin pi-spinner text-2xl text-primary"></i>
             </div>
@@ -213,6 +231,28 @@ function formatRelativeDate(isoString: string): string {
     border-color: var(--color-outline-variant);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     transform: translateX(4px);
+}
+
+/* ── Daily Summary Card ── */
+.daily-summary-card {
+    padding: 0.875rem 1rem;
+    background: var(--color-surface-container-low);
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 1rem;
+}
+
+.daily-progress-track {
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+    overflow: hidden;
+}
+
+.daily-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--color-primary);
+    transition: width 0.5s ease-out;
 }
 
 /* Custom Scrollbar */

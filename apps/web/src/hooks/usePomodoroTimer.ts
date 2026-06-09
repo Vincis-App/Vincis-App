@@ -10,6 +10,7 @@ export interface PomodoroSettings {
 }
 
 const STORAGE_KEY = 'vincis-pomodoro-settings'
+const SESSION_STORAGE_KEY = 'vincis-pomodoro-active-session'
 
 const DEFAULT_SETTINGS: PomodoroSettings = {
     focusTime: 25,
@@ -33,6 +34,33 @@ function saveSettings(settings: PomodoroSettings) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
 }
 
+interface PersistedTimerState {
+    currentPhase: PomodoroPhase
+    currentCycle: number
+    timeRemaining: number
+    totalElapsed: number
+    sessionStartedAt: string
+    settings: PomodoroSettings
+}
+
+function loadActiveSession(): PersistedTimerState | null {
+    try {
+        const stored = sessionStorage.getItem(SESSION_STORAGE_KEY)
+        if (stored) return JSON.parse(stored)
+    } catch { /* ignore */ }
+    return null
+}
+
+function saveActiveSession(state: PersistedTimerState) {
+    try {
+        sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state))
+    } catch { /* ignore */ }
+}
+
+function clearActiveSession() {
+    sessionStorage.removeItem(SESSION_STORAGE_KEY)
+}
+
 export function usePomodoroTimer() {
     // ─── Settings ─────────────────────────────────────────────────────────────────
     const settings = ref<PomodoroSettings>(loadSettings())
@@ -51,6 +79,19 @@ export function usePomodoroTimer() {
     const totalElapsed = ref(0) // tempo total decorrido em segundos
 
     let intervalId: ReturnType<typeof setInterval> | null = null
+
+    // ─── Restore Active Session ──────────────────────────────────────────────────
+    const savedSession = loadActiveSession()
+    if (savedSession) {
+        currentPhase.value = savedSession.currentPhase
+        currentCycle.value = savedSession.currentCycle
+        timeRemaining.value = savedSession.timeRemaining
+        totalElapsed.value = savedSession.totalElapsed
+        sessionStartedAt.value = new Date(savedSession.sessionStartedAt)
+        settings.value = { ...settings.value, ...savedSession.settings }
+        isRunning.value = true
+        isPaused.value = true // Restore paused so user can resume
+    }
 
     // ─── Computed ─────────────────────────────────────────────────────────────────
     const totalTimeForPhase = computed(() => {
@@ -158,6 +199,19 @@ export function usePomodoroTimer() {
     }
 
     // ─── Timer Control ────────────────────────────────────────────────────────────
+    function persistState() {
+        if (sessionStartedAt.value) {
+            saveActiveSession({
+                currentPhase: currentPhase.value,
+                currentCycle: currentCycle.value,
+                timeRemaining: timeRemaining.value,
+                totalElapsed: totalElapsed.value,
+                sessionStartedAt: sessionStartedAt.value.toISOString(),
+                settings: settings.value,
+            })
+        }
+    }
+
     function tick() {
         if (timeRemaining.value <= 0) {
             transitionToNextPhase()
@@ -165,6 +219,8 @@ export function usePomodoroTimer() {
         }
         timeRemaining.value--
         totalElapsed.value++
+        // Persist every 5 seconds to avoid excessive writes
+        if (totalElapsed.value % 5 === 0) persistState()
     }
 
     function startTimer() {
@@ -211,6 +267,7 @@ export function usePomodoroTimer() {
         }
         isRunning.value = false
         isPaused.value = false
+        clearActiveSession()
     }
 
     function resetTimer() {
@@ -220,6 +277,7 @@ export function usePomodoroTimer() {
         timeRemaining.value = settings.value.focusTime * 60
         sessionStartedAt.value = null
         totalElapsed.value = 0
+        clearActiveSession()
     }
 
     // ─── Cleanup ──────────────────────────────────────────────────────────────────

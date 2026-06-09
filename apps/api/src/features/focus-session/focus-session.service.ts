@@ -11,6 +11,9 @@ export const focusSessionService = {
             cyclesTarget: number;
             cyclesCompleted: number;
             isCompleted: boolean;
+            modalities?: string[];
+            questionsDone?: number;
+            questionsCorrect?: number;
             startedAt: string;
             finishedAt?: string;
         },
@@ -26,6 +29,9 @@ export const focusSessionService = {
                 cyclesTarget: data.cyclesTarget,
                 cyclesCompleted: data.cyclesCompleted,
                 isCompleted: data.isCompleted,
+                modalities: data.modalities || [],
+                questionsDone: data.questionsDone || 0,
+                questionsCorrect: data.questionsCorrect || 0,
                 startedAt: new Date(data.startedAt),
                 finishedAt: data.finishedAt ? new Date(data.finishedAt) : null,
                 disciplineId: data.disciplineId,

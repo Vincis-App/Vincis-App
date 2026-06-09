@@ -1,17 +1,35 @@
 <script setup lang="ts">
 import { VCard } from '@/components/ui'
 import FocusHistory from './FocusHistory.vue'
+import type { StudyModality } from './FocusSessionReport.vue'
 
 defineProps<{
     disciplines: any[]
     selectedDisciplineId: number | null
     settings: any
+    selectedModalities: StudyModality[]
 }>()
 
 defineEmits<{
     (e: 'update:selectedDisciplineId', val: number): void
+    (e: 'update:selectedModalities', val: StudyModality[]): void
     (e: 'start'): void
+    (e: 'applyPreset', minutes: number): void
 }>()
+
+const PRESETS = [
+    { min: 25, label: 'Pomodoro', icon: 'pi-stopwatch' },
+    { min: 50, label: '50 min', icon: 'pi-clock' },
+    { min: 90, label: '90 min', icon: 'pi-hourglass' },
+]
+
+const MODALITIES: { id: StudyModality; label: string; icon: string }[] = [
+    { id: 'PDF', label: 'PDF / Leitura', icon: 'pi-file-pdf' },
+    { id: 'VIDEO', label: 'Videoaula', icon: 'pi-play' },
+    { id: 'QUESTIONS', label: 'Questões', icon: 'pi-question-circle' },
+    { id: 'LEGISLATION', label: 'Lei Seca', icon: 'pi-briefcase' },
+    { id: 'REVIEW', label: 'Revisão', icon: 'pi-replay' },
+]
 </script>
 
 <template>
@@ -20,6 +38,20 @@ defineEmits<{
         <!-- ─── Área Principal (Disciplinas e Configurações) ─── -->
         <div class="xl:col-span-8 space-y-8 flex flex-col">
             
+            <!-- Quick Presets -->
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-bold uppercase tracking-widest text-on-surface-muted">Presets</span>
+                <div class="flex gap-2">
+                    <button v-for="preset in PRESETS" :key="preset.min"
+                        @click="$emit('applyPreset', preset.min)"
+                        class="preset-btn"
+                        :class="{ 'preset-btn--active': settings.focusTime === preset.min }">
+                        <i class="pi text-[10px]" :class="preset.icon"></i>
+                        <span>{{ preset.label }}</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Seleção de Disciplinas -->
             <VCard class="p-8 backdrop-blur-xl bg-surface-container-lowest/90 border border-outline-variant/40 shadow-xl shadow-primary/5 rounded-[2rem]">
                 <div class="flex items-center gap-3 mb-8">
@@ -64,6 +96,34 @@ defineEmits<{
                                 </span>
                             </div>
                         </div>
+                    </button>
+                </div>
+            </VCard>
+
+            <!-- Modalidades de Estudo -->
+            <VCard class="p-6 backdrop-blur-xl bg-surface-container-lowest/90 border border-outline-variant/40 rounded-[1.5rem] shadow-lg shadow-black/5">
+                <h3 class="text-sm font-sans font-bold uppercase tracking-widest text-on-surface-muted mb-4 flex items-center gap-2">
+                    <i class="pi pi-tag text-primary"></i>
+                    Como vai estudar?
+                </h3>
+                <div class="flex flex-wrap gap-2">
+                    <button v-for="mod in MODALITIES" :key="mod.id"
+                        @click="(() => {
+                            const current = [...selectedModalities]
+                            const idx = current.indexOf(mod.id)
+                            if (idx >= 0) {
+                                if (current.length === 1) return
+                                current.splice(idx, 1)
+                            } else {
+                                current.push(mod.id)
+                            }
+                            $emit('update:selectedModalities', current)
+                        })()"
+                        class="modality-btn"
+                        :class="selectedModalities.includes(mod.id) ? 'modality-btn--active' : 'modality-btn--inactive'">
+                        <i class="pi text-sm" :class="mod.icon"></i>
+                        <span>{{ mod.label }}</span>
+                        <i v-if="selectedModalities.includes(mod.id)" class="pi pi-check text-[10px]"></i>
                     </button>
                 </div>
             </VCard>
@@ -177,6 +237,68 @@ defineEmits<{
 </template>
 
 <style scoped>
+/* ─── Preset Buttons ─── */
+.preset-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: var(--color-surface-container-low);
+    color: var(--color-on-surface-muted);
+    border: 1px solid transparent;
+}
+
+.preset-btn:hover {
+    background: var(--color-surface-container-highest);
+    color: var(--color-on-surface);
+    border-color: var(--color-outline-variant);
+}
+
+.preset-btn--active {
+    background: var(--color-primary-container);
+    color: var(--color-on-primary-container);
+    border-color: var(--color-primary);
+}
+
+/* ─── Modality Buttons ─── */
+.modality-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+}
+
+.modality-btn--active {
+    background: var(--color-surface-container-lowest);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--color-primary) 12%, transparent);
+}
+
+.modality-btn--inactive {
+    background: transparent;
+    color: var(--color-on-surface-muted);
+    opacity: 0.6;
+}
+
+.modality-btn--inactive:hover {
+    opacity: 1;
+    background: var(--color-surface-container);
+}
+
 /* ─── Discipline Cards ─── */
 .discipline-card {
     position: relative;

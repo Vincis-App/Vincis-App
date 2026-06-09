@@ -14,6 +14,9 @@ export interface FocusSession {
     cyclesTarget: number
     cyclesCompleted: number
     isCompleted: boolean
+    modalities: string[]
+    questionsDone: number
+    questionsCorrect: number
     startedAt: string
     finishedAt?: string
     disciplineId: number
@@ -33,6 +36,9 @@ export interface CreateFocusSessionPayload {
     cyclesTarget: number
     cyclesCompleted: number
     isCompleted: boolean
+    modalities?: string[]
+    questionsDone?: number
+    questionsCorrect?: number
     startedAt: string
     finishedAt?: string
 }
