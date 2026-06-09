@@ -170,9 +170,12 @@ model FocusSession {
   longBreakTime   Int
   cyclesTarget    Int
   cyclesCompleted Int
-  isCompleted     Boolean    @default(false)
-  startedAt       DateTime
-  finishedAt      DateTime?
+  isCompleted      Boolean    @default(false)
+  modalities       String[]   @default([])
+  questionsDone    Int        @default(0)
+  questionsCorrect Int        @default(0)
+  startedAt        DateTime
+  finishedAt       DateTime?
   disciplineId    Int
   studyPlanId     Int
   userId          Int
