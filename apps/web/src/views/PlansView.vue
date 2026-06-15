@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { VButton } from '@/components/ui';
 import DsModal from '@/components/ui/DsModal.vue';
 import { usePlan, useUpdatePlanMutation, type PlanType } from '@/hooks/usePlan';
-import { useGeneratePixMutation } from '@/hooks/usePayment';
+import { useGeneratePixMutation, useSimulatePaymentMutation } from '@/hooks/usePayment';
 import { useAuthStore } from '@/stores/auth';
 import { useQueryClient } from '@tanstack/vue-query';
 
@@ -12,6 +12,7 @@ const authStore = useAuthStore()
 const queryClient = useQueryClient()
 const { mutate: updatePlan, isPending: isUpdating } = useUpdatePlanMutation()
 const { mutateAsync: generatePix, isPending: isGeneratingPix } = useGeneratePixMutation()
+const { mutateAsync: simulatePayment } = useSimulatePaymentMutation()
 
 const currentPlan = computed(() => plan.value.type)
 
@@ -43,7 +44,28 @@ async function handleChangePlan(planType: PlanType) {
             }
         } catch (error) {
             console.error('Erro ao gerar Checkout:', error)
-            alert('Não foi possível gerar a cobrança no momento. Verifique se a chave da API está correta.')
+            if (import.meta.env.DEV) {
+                const simulate = confirm(
+                    'Não foi possível gerar a cobrança com a AbacatePay (Chave de API inválida ou inativa no servidor).\n\nComo você está rodando localmente em modo de desenvolvimento, deseja simular o pagamento para ativar o Premium agora?'
+                )
+                if (simulate) {
+                    try {
+                        const userId = authStore.user?.id
+                        if (userId) {
+                            await simulatePayment(String(userId))
+                            queryClient.invalidateQueries({ queryKey: ['user-plan'] })
+                            alert('Sucesso! Pagamento simulado com sucesso. Seu plano foi atualizado para PREMIUM.')
+                        } else {
+                            alert('Não foi possível obter o ID do usuário para simular o pagamento.')
+                        }
+                    } catch (simError) {
+                        console.error('Erro ao simular pagamento:', simError)
+                        alert('Erro ao simular o pagamento.')
+                    }
+                }
+            } else {
+                alert('Não foi possível gerar a cobrança no momento. Verifique se a chave da API está correta.')
+            }
         }
     } else {
         updatePlan(planType)

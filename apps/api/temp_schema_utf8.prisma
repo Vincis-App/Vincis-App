@@ -1,0 +1,122 @@
+﻿generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  name          String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  supabaseId    String?        @unique
+  avatar        String?
+  plan          Plan           @default(BASIC)
+  planExpiresAt DateTime?
+  editais       Edital[]
+  errorLogs     ErrorLog[]
+  FocusSession  FocusSession[]
+  studyPlans    StudyPlan[]
+}
+
+model StudyPlan {
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String?
+  is_active    Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userId       Int
+  disciplines  Discipline[]
+  errorLogs    ErrorLog[]
+  FocusSession FocusSession[]
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Discipline {
+  id           Int            @id @default(autoincrement())
+  name         String
+  color        String
+  weight       Float          @default(1.0)
+  studyPlanId  Int
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  description  String?
+  studyPlan    StudyPlan      @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
+  FocusSession FocusSession[]
+  topics       Topic[]
+}
+
+model Topic {
+  id           Int        @id @default(autoincrement())
+  name         String
+  description  String?
+  isCompleted  Boolean    @default(false)
+  disciplineId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  errorLogs    ErrorLog[]
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+}
+
+model ErrorLog {
+  id          Int       @id @default(autoincrement())
+  analise     String
+  correcao    String?
+  fonte       String?
+  diagnostico String?
+  topicText   String?
+  isResolved  Boolean   @default(false)
+  resolvedAt  DateTime?
+  topicId     Int?
+  userId      Int
+  studyPlanId Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  studyPlan   StudyPlan @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
+  topic       Topic?    @relation(fields: [topicId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Edital {
+  id          Int      @id @default(autoincrement())
+  title       String
+  fileSize    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      Int
+  description String?
+  fileUrl     String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FocusSession {
+  id              Int        @id @default(autoincrement())
+  duration        Int
+  focusTime       Int
+  breakTime       Int
+  longBreakTime   Int
+  cyclesTarget    Int
+  cyclesCompleted Int
+  isCompleted     Boolean    @default(false)
+  startedAt       DateTime
+  finishedAt      DateTime?
+  disciplineId    Int
+  studyPlanId     Int
+  userId          Int
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime
+  Discipline      Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  StudyPlan       StudyPlan  @relation(fields: [studyPlanId], references: [id], onDelete: Cascade)
+  User            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Plan {
+  BASIC
+  PREMIUM
+}
+
+
